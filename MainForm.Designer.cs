@@ -3,7 +3,7 @@
     partial class MainForm
     {
         /// <summary>
-        /// 必需的设计器变量。
+        /// 必需的设计器变量。1
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
