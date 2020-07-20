@@ -149,7 +149,7 @@ namespace WorkFlow
             this.TabIndex = 0;
             this.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.Size = new System.Drawing.Size(770, 455);
+            this.Size = new System.Drawing.Size(770, 480);
         }
 
         public List<Label> labels;

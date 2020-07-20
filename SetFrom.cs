@@ -50,6 +50,7 @@ namespace WorkFlow
             iniFile iniF = new iniFile();
             iniF.iniPath = @"./setting.ini";
             iniF.writeIni("FileExportPath", "Path", @filePath);
+            Console.WriteLine("path="+iniF.iniPath);
         }
 
         public void InitSetting()
@@ -57,6 +58,7 @@ namespace WorkFlow
             iniFile iniF = new iniFile();
             iniF.iniPath = @"./setting.ini";
             fileExportPath = iniF.readIni("FileExportPath", "Path");
+            Console.WriteLine("\npath="+iniF.iniPath);
         }
 
         private void ButtonCM_MouseClick(object sender, MouseEventArgs e)

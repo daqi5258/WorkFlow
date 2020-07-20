@@ -83,9 +83,10 @@ namespace WorkFlow
         //人员信息安排
         private void PersonArrange_Click(object sender, EventArgs e)
         {
-            TabPersonArrange.Visible = true;
-
-
+            PAMain PAMain = new PAMain();
+            PAMain.init();
+            MainPanel.Controls.Add(PAMain);
+            this.ResumeLayout(false);
 
 
 
@@ -528,6 +529,11 @@ namespace WorkFlow
             Exportpath = iniF.readIni("FileExportPath", "Path");
         }
 
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            ShowMessage("x="+this.Width.ToString()+ ",y="+this.Height.ToString());
+        }
+
 
         /*
         private void detailGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -548,6 +554,6 @@ namespace WorkFlow
             }
         }
         */
-     
+
     }
 }
