@@ -529,7 +529,7 @@ namespace WorkFlow
         }
 
 
-
+        /*
         private void detailGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             //if (detailGrid.IsCurrentCellDirty)
@@ -547,5 +547,7 @@ namespace WorkFlow
                 detailGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
             }
         }
+        */
+     
     }
 }

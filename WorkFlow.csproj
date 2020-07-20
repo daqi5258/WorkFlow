@@ -79,6 +79,9 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="oracleDB.cs" />
+    <Compile Include="PAInformation.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Person.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

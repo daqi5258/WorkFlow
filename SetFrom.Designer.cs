@@ -53,7 +53,6 @@ namespace WorkFlow
             this.FileExportPath.Name = "FileExportPath";
             this.FileExportPath.Size = new System.Drawing.Size(540, 40);
             this.FileExportPath.TabIndex = 1;
-            this.FileExportPath.Text = fileExportPath+"";
             this.FileExportPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ButtonST
