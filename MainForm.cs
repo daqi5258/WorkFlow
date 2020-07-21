@@ -27,7 +27,10 @@ namespace WorkFlow
             InitSetting();
         }
 
-       
+       public void clear()
+       {
+            MainPanel.Controls.Clear();
+       }
 
         /// <summary>
         /// 选择某个大项目，汇总该项目评分信息到指定目录
@@ -36,7 +39,7 @@ namespace WorkFlow
         /// <param name="e"></param>
         private void ZGB_Tool1_1_Click(object sender, EventArgs e)
         {
-
+            clear();
             Check("1_1");
             /*
             Form f = new Form
@@ -72,26 +75,28 @@ namespace WorkFlow
         }
         private void ZGB_Tool1_2_Click(object sender, EventArgs e)
         {
+            clear();
             Check("1_2");
         }
 
-        private void ZGB_Tool2_Click(object sender, EventArgs e)
+        private void newPA_Click(object sender, EventArgs e)
         {
-
-        }
-
-        //人员信息安排
-        private void PersonArrange_Click(object sender, EventArgs e)
-        {
+            clear();
             PAMain PAMain = new PAMain();
             PAMain.init();
             MainPanel.Controls.Add(PAMain);
             this.ResumeLayout(false);
-
-
-
-
         }
+
+        private void openPA_Click(object sender, EventArgs e)
+        {
+            clear();
+            PAMain PAMain = new PAMain();
+            PAMain.init();
+            MainPanel.Controls.Add(PAMain);
+            this.ResumeLayout(false);
+        }
+
 
 
 
@@ -534,6 +539,7 @@ namespace WorkFlow
             ShowMessage("x="+this.Width.ToString()+ ",y="+this.Height.ToString());
         }
 
+      
 
         /*
         private void detailGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)

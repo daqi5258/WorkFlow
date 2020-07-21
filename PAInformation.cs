@@ -1,4 +1,5 @@
 ﻿using NPOI.SS.Formula.Functions;
+using NPOI.XSSF.UserModel;
 using Org.BouncyCastle.Crypto.Paddings;
 using System;
 using System.Collections.Generic;
@@ -26,22 +27,7 @@ namespace WorkFlow
             P0.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             P0.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 25F));
             P0.RowCount = 13;
-            /*
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 9F));
-            */
-
+         
             P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
             P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
             P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
@@ -56,12 +42,14 @@ namespace WorkFlow
             P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
             P0.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 21F));
             P0.TabIndex = 0;
+
             P1 = new Panel();
             P1.Dock = System.Windows.Forms.DockStyle.Fill;
             P1.Location = new System.Drawing.Point(3, 3);
-           // P1.BackColor = System.Drawing.Color.FromArgb(0, 100, 0);
+            P1.BackColor = System.Drawing.Color.FromArgb(0, 100, 0);
             P1.Size =new System.Drawing.Size(500,240);
             P1.TabIndex = 1;
+            initDataGrid(P1);
 
             Label tl = new Label();
             tl.Name = "test";
@@ -116,11 +104,12 @@ namespace WorkFlow
                 tb.Name = "paTB" + i;
                 tb.Dock = System.Windows.Forms.DockStyle.Fill;
                 tb.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-                tb.Text = "tb="+i;
+                //tb.Text = "tb="+i;
                 tb.Margin = new System.Windows.Forms.Padding(0);
                 if (i<3)
                 {
                     P0.Controls.Add(tb, 1, i);
+                    tb.TextAlign = HorizontalAlignment.Center;
                     P0.SetColumnSpan(tb,3);
                 }else if (i==3 )
                 {
@@ -152,10 +141,72 @@ namespace WorkFlow
             this.Size = new System.Drawing.Size(770, 480);
         }
 
+
+        public void initDataGrid(Panel parent)
+        {
+            DataGridView = new DataGridView(); 
+            ((System.ComponentModel.ISupportInitialize)(DataGridView)).BeginInit();
+            parent.SuspendLayout();
+            DataGridView.RowHeadersVisible = false;
+            DataGridViewTextBoxColumn C1 = new DataGridViewTextBoxColumn()
+            {
+                Name = "出图子项号",
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+            };
+            DataGridViewTextBoxColumn C2 = new DataGridViewTextBoxColumn()
+            {
+                Name = "出图子项名称",
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+            };
+            DataGridViewComboBoxColumn C3 = new DataGridViewComboBoxColumn()
+            {
+                Name = "建筑类型",
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
+                
+            };
+            C3.Items.Add("T1");
+            C3.Items.Add("S1");
+
+            DataGridViewTextBoxColumn C4 = new DataGridViewTextBoxColumn()
+            {
+                Name = "建筑面积区间段",
+                AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
+            };
+
+            /*
+            DataGridViewComboBoxColumn C2 = new  DataGridViewComboBoxColumn();
+            C2.Items.Add("T1");
+            C2.Items.Add("T2");
+            */
+            
+            
+            // 
+            // dataGridView1
+            // 
+            DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            C1,
+            C2,
+            C3,
+            C4});
+            DataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
+            DataGridView.Location = new System.Drawing.Point(0, 0);
+            DataGridView.Name = "DataGridView";
+            DataGridView.RowTemplate.Height = 23;
+            //DataGridView.Size = new System.Drawing.Size(800, 450);
+            DataGridView.AutoSize = true;
+            DataGridView.TabIndex = 0;
+           
+            parent.Controls.Add(DataGridView);
+            ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).EndInit();
+            parent.ResumeLayout(false);
+        }
+
         public List<Label> labels;
         public List<TextBox> textBoxs;
         public TableLayoutPanel P0;
         public Panel P1;
+        public DataGridView DataGridView;
 
 
     }

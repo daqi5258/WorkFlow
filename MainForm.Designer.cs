@@ -40,6 +40,8 @@
             this.MessageText = new System.Windows.Forms.RichTextBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.MainPanel = new System.Windows.Forms.Panel();
+            this.openPA = new System.Windows.Forms.ToolStripMenuItem();
+            this.newPA = new System.Windows.Forms.ToolStripMenuItem();
             this.TopMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,7 +52,7 @@
             this.Settings});
             this.TopMenu.Location = new System.Drawing.Point(0, 0);
             this.TopMenu.Name = "TopMenu";
-            this.TopMenu.Size = new System.Drawing.Size(801, 25);
+            this.TopMenu.Size = new System.Drawing.Size(984, 25);
             this.TopMenu.TabIndex = 0;
             this.TopMenu.Text = "menuStrip1";
             // 
@@ -69,7 +71,7 @@
             this.ZGD_TOOL1_2,
             this.PersonArrange});
             this.总工办.Name = "总工办";
-            this.总工办.Size = new System.Drawing.Size(112, 22);
+            this.总工办.Size = new System.Drawing.Size(180, 22);
             this.总工办.Text = "总工办";
             // 
             // ZGB_Tool1_1
@@ -88,10 +90,13 @@
             // 
             // PersonArrange
             // 
+            this.PersonArrange.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newPA,
+            this.openPA});
             this.PersonArrange.Name = "PersonArrange";
             this.PersonArrange.Size = new System.Drawing.Size(184, 22);
             this.PersonArrange.Text = "人员安排表";
-            this.PersonArrange.Click += new System.EventHandler(this.PersonArrange_Click);
+
             // 
             // Settings
             // 
@@ -113,7 +118,7 @@
             this.MessageText.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.MessageText.Location = new System.Drawing.Point(0, 670);
             this.MessageText.Name = "MessageText";
-            this.MessageText.Size = new System.Drawing.Size(801, 50);
+            this.MessageText.Size = new System.Drawing.Size(984, 50);
             this.MessageText.TabIndex = 1;
             this.MessageText.Text = "";
             // 
@@ -123,7 +128,7 @@
             this.progressBar.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.progressBar.Location = new System.Drawing.Point(0, 660);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(801, 10);
+            this.progressBar.Size = new System.Drawing.Size(984, 10);
             this.progressBar.TabIndex = 3;
             // 
             // MainPanel
@@ -132,8 +137,22 @@
             this.MainPanel.Location = new System.Drawing.Point(0, 25);
             this.MainPanel.Margin = new System.Windows.Forms.Padding(0);
             this.MainPanel.Name = "MainPanel";
-            this.MainPanel.Size = new System.Drawing.Size(801, 635);
+            this.MainPanel.Size = new System.Drawing.Size(984, 635);
             this.MainPanel.TabIndex = 4;
+            // 
+            // openPA
+            // 
+            this.openPA.Name = "openPA";
+            this.openPA.Size = new System.Drawing.Size(180, 22);
+            this.openPA.Text = "打开文件";
+            this.openPA.Click += new System.EventHandler(this.openPA_Click);
+            // 
+            // newPA
+            // 
+            this.newPA.Name = "newPA";
+            this.newPA.Size = new System.Drawing.Size(180, 22);
+            this.newPA.Text = "新建文件";
+            this.newPA.Click += new System.EventHandler(this.newPA_Click);
             // 
             // MainForm
             // 
@@ -141,7 +160,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            //this.ClientSize = new System.Drawing.Size(817, 758);
+            this.ClientSize = new System.Drawing.Size(984, 720);
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.MessageText);
@@ -149,7 +168,7 @@
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.TopMenu;
-            this.MinimumSize = new System.Drawing.Size(817, 758);
+            this.MinimumSize = new System.Drawing.Size(1100, 758);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "和创设计-WorkFlow";
@@ -174,6 +193,8 @@
         public System.Windows.Forms.ToolStripMenuItem PersonArrange;
         public System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Panel MainPanel;
+        private System.Windows.Forms.ToolStripMenuItem newPA;
+        private System.Windows.Forms.ToolStripMenuItem openPA;
     }
 }
 

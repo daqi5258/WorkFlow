@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="excelManagement.cs" />
+    <Compile Include="HCType.cs" />
     <Compile Include="iniFile.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -94,12 +95,6 @@
     <Compile Include="SetFrom.Designer.cs">
       <DependentUpon>SetFrom.cs</DependentUpon>
     </Compile>
-    <Compile Include="test.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="test.Designer.cs">
-      <DependentUpon>test.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -115,9 +110,6 @@
     </Compile>
     <EmbeddedResource Include="SetFrom.resx">
       <DependentUpon>SetFrom.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="test.resx">
-      <DependentUpon>test.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
