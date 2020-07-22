@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
@@ -10,20 +11,17 @@ namespace WorkFlow
 {
     class PAMain: System.Windows.Forms.TableLayoutPanel
     {
-        public void init()
+        public RichTextBox pRTB;
+        public void init(RichTextBox RTB)
         {
-            PAInformation pAInformation = new PAInformation();
-            pAInformation.Init();
+            pRTB = RTB;
+            pAInformation = new PAInformation();
+            pAInformation.Init(pRTB);
             Panel = new Panel()
             {
                 Dock = System.Windows.Forms.DockStyle.Fill,
                 //BackColor = System.Drawing.Color.Red
             };
-
-
-
-
-
 
             Button saveB = new Button()
             {
@@ -69,7 +67,7 @@ namespace WorkFlow
             this.TabIndex = 0;
 
             this.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
             //this.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
             this.Size = new System.Drawing.Size(770, 460);
             
@@ -112,25 +110,25 @@ namespace WorkFlow
            
             DataGridViewTextBoxColumn C4 = new DataGridViewTextBoxColumn()
             {
-                Name = "设计人",
+                Name = "审核人",
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
 
             };
             DataGridViewTextBoxColumn C5 = new DataGridViewTextBoxColumn()
             {
-                Name = "校对人",
+                Name = "专负（校核）人",
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
 
             };
             DataGridViewTextBoxColumn C6 = new DataGridViewTextBoxColumn()
             {
-                Name = "审核人",
+                Name = "校对人",
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
 
             };
             DataGridViewTextBoxColumn C7 = new DataGridViewTextBoxColumn()
             {
-                Name = "审定人",
+                Name = "设计人",
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
 
             };
@@ -227,7 +225,7 @@ namespace WorkFlow
 
         private void DataGridView_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
-            Console.WriteLine(e.ToString()+",\nr="+e.RowIndex+",c="+e.ColumnIndex+",ct="+e.Context);
+            pRTB.AppendText(e.ToString()+",\nr="+e.RowIndex+",c="+e.ColumnIndex+",ct="+e.Context);
         }
         private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
@@ -342,8 +340,21 @@ namespace WorkFlow
 
         private void saveB_click(object sender, EventArgs e)
         {
-            ExcelManagement em = new ExcelManagement();
-            em.Write(@"C: \Users\jdq\Desktop\");
+            try
+            {
+                ExcelManagement em = new ExcelManagement();
+                List<String[]> pList = pAInformation.GetValue();
+                String path = @"\\Hcdata\和创施工图设计平台\" + pAInformation.filePath + "\\项师-工作目录\\ISO\\ISO表格";
+                String fileName = em.Write(path, pList, pAInformation.DataGridView, DataGridView);
+                if (fileName.IndexOf("ERROR") > -1)
+                    pRTB.Text="\n保存失败，请联系程序员，错误信息：" + fileName;
+                else
+                    pRTB.Text="\n保存成功，文件：" + fileName;
+            }
+            catch (Exception e1)
+            {
+                pRTB.Text="\n操作失败，错误信息：" + e1.ToString();
+            }
         }
         public Panel Panel;
         public TabControl tab;
@@ -351,5 +362,6 @@ namespace WorkFlow
         public TabPage dtp;
         public DataGridView DataGridView;
         public List<HCType> HCTypes;
+        public PAInformation pAInformation;
     }
 }

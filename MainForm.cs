@@ -83,7 +83,7 @@ namespace WorkFlow
         {
             clear();
             PAMain PAMain = new PAMain();
-            PAMain.init();
+            PAMain.init(this.MessageText);
             MainPanel.Controls.Add(PAMain);
             this.ResumeLayout(false);
         }
@@ -92,7 +92,7 @@ namespace WorkFlow
         {
             clear();
             PAMain PAMain = new PAMain();
-            PAMain.init();
+            PAMain.init(this.MessageText);
             MainPanel.Controls.Add(PAMain);
             this.ResumeLayout(false);
         }
@@ -101,22 +101,7 @@ namespace WorkFlow
 
 
 
-        private string SelectFilePath()
-        {
-            string path = null;
-            var openFileDialog = new OpenFileDialog()
-            {
-                Filter = "Files (*.*)|*.txt"//如果需要筛选txt文件（"Files (*.txt)|*.txt"）
-            }
-           ;
-            var result = openFileDialog.ShowDialog();
-            if (result.Equals("OK") || result == DialogResult.OK)
-            {
-                path = openFileDialog.FileName;
-            }
-            return path;
-        }
-
+      
         /// <summary>
         /// 获取项目文件路径
         /// </summary>
@@ -136,7 +121,7 @@ namespace WorkFlow
             }
             return path;
         }
-        
+        /*
         public String[] GetFiles(String filePath,String project_id,String project_name)
         {
             OracleDB odb = new OracleDB();
@@ -152,116 +137,9 @@ namespace WorkFlow
             }
             return files1;
         }
+        */
+       
 
-
-        public PersonArrange GetPersonDetail(String filepath)
-        {
-            PersonArrange pa = new PersonArrange();
-            //string[] files1 = Directory.GetFiles(filepath + @"\项师-工作目录\1 ISO\ISO表格\人员安排表", "*人员安排*.xls*", SearchOption.AllDirectories);
-            string[] files1 = Directory.GetFiles(filepath , "*人员安排*.xls*", SearchOption.AllDirectories);
-            try
-            {
-                Console.WriteLine(files1[0]);
-                 workbook = WorkbookFactory.Create(files1[0]);
-             }
-             catch (Exception e)
-            {
-                Console.WriteLine("\n" + e.ToString());
-             }
-             if (workbook is null)
-             {
-                Console.WriteLine("workbook is null");
-                return pa;
-             } 
-             ISheet sheet = workbook.GetSheetAt(0);
-            
-            pa.project_name = sheet.GetRow(0).GetCell(3) == null ? "" : sheet.GetRow(0).GetCell(3).ToString();
-            pa.construct_company = sheet.GetRow(1).GetCell(3) == null ? "" : sheet.GetRow(1).GetCell(3).ToString();
-            pa.project_id = sheet.GetRow(2).GetCell(3) == null ? "" : sheet.GetRow(2).GetCell(3).ToString();
-            pa.person_project  = sheet.GetRow(3).GetCell(3) == null ? "" : sheet.GetRow(3).GetCell(3).ToString();
-
-            pa.person_1 = sheet.GetRow(6).GetCell(4)==null?"": sheet.GetRow(6).GetCell(4).ToString();
-            pa.person_2 = sheet.GetRow(6).GetCell(7) == null ? "" : sheet.GetRow(6).GetCell(7).ToString();
-            pa.person_3 = sheet.GetRow(6).GetCell(10) == null ? "" : sheet.GetRow(6).GetCell(10).ToString();
-            pa.person_4 = sheet.GetRow(6).GetCell(13) == null ? "" : sheet.GetRow(6).GetCell(13).ToString();
-            pa.person_5 = sheet.GetRow(6).GetCell(16) == null ? "" : sheet.GetRow(6).GetCell(16).ToString();
-            
-            List<DetailArrange> lda = new List<DetailArrange>();
-            for (int i = 8;i<sheet.LastRowNum ;i++)
-            {
-                if (sheet.GetRow(i) != null)
-                {
-                    //Console.WriteLine("i=" + i + ",v=" + sheet.GetRow(i).GetCell(0));
-                    DetailArrange dat = new DetailArrange
-                    {
-                        flag = Value(sheet.GetRow(i).GetCell(0)),
-                        project_detail = Value(sheet.GetRow(i).GetCell(1)),
-                        project_type = Value(sheet.GetRow(i).GetCell(2)),
-                        detail_no = Value(sheet.GetRow(i).GetCell(3)),
-                        person_design_1 = Value(sheet.GetRow(i).GetCell(4)),
-                        person_verify_1 = Value(sheet.GetRow(i).GetCell(5)),
-                        person_check_1 = Value(sheet.GetRow(i).GetCell(6)),
-                        person_design_2 = Value(sheet.GetRow(i).GetCell(7)),
-                        person_verify_2 = Value(sheet.GetRow(i).GetCell(8)),
-                        person_check_2 = Value(sheet.GetRow(i).GetCell(9)),
-                        person_design_3 = Value(sheet.GetRow(i).GetCell(10)),
-                        person_verify_3 = Value(sheet.GetRow(i).GetCell(11)),
-                        person_check_3 = Value(sheet.GetRow(i).GetCell(12)),
-                        person_design_4 = Value(sheet.GetRow(i).GetCell(13)),
-                        person_verify_4 = Value(sheet.GetRow(i).GetCell(14)),
-                        person_check_4 = Value(sheet.GetRow(i).GetCell(15)),
-                        person_design_5 = Value(sheet.GetRow(i).GetCell(16)),
-                        person_verify_5 = Value(sheet.GetRow(i).GetCell(17)),
-                        person_check_5 = Value(sheet.GetRow(i).GetCell(18))
-                    };
-                    lda.Add(dat);
-                }
-            }
-            pa.setDAS(lda);
-            //Console.WriteLine("\n sht_num="+sheet.LastRowNum+",project_id="+pa.project_id+",p1="+pa.person_1+",p2="+pa.person_2+",rowId="+rowId+",p="+pa.das[1].person_design_1);
-            return pa;
-
-        }
-
-        public static String Value(ICell cell)
-        {
-            if (cell is null)
-            {
-                return "";
-            }
-            String str = "";
-            if (cell.CellType == CellType.String)
-            {
-                str = cell.StringCellValue;
-            }
-            else if(cell.CellType == CellType.Numeric){
-                str = cell.NumericCellValue + "";
-            }
-            else if (cell.CellType == CellType.Formula)
-            {
-                if(cell.CachedFormulaResultType==CellType.Numeric)
-                    str = cell.NumericCellValue + "";
-                else if (cell.CachedFormulaResultType == CellType.Error)
-                    str = cell.ErrorCellValue.ToString();
-            }else if (cell.CellType==CellType.Error)
-            {
-                str = cell.ErrorCellValue.ToString();
-            }
-            else if (cell.CellType == CellType.Blank)
-            {
-                str = cell.ToString();
-            }
-            //Console.WriteLine("str="+str);
-            return str;
-        }
-
-
-        public String[]  GetFold(String path,String  filer, SearchOption searchOption)
-        {
-            //Console.WriteLine(path);
-            String[] dirs = Directory.GetDirectories(path, filer, searchOption);
-            return dirs;
-        }
         public void Check(String flag)
         {
             progressBar.Value =0;
@@ -277,46 +155,64 @@ namespace WorkFlow
             String dept = str.Split('\\')[4];
             if (str.Length<0)
                 return;
-            String[] XS = GetFold(str, "*项师*", SearchOption.TopDirectoryOnly);
+            String[] XS = Directory.GetDirectories(str, "*项师*", SearchOption.TopDirectoryOnly);
             
             //人员信息表
-            String[] ISO = GetFold(XS[0],"*ISO*", SearchOption.TopDirectoryOnly);
+            String[] ISO = Directory.GetDirectories(XS[0],"*ISO*", SearchOption.TopDirectoryOnly);
             //String[] ISOBG = getFold(ISO[0], "*ISO*", SearchOption.TopDirectoryOnly);
-            String[] RY = GetFold(XS[0], "*人员*", SearchOption.AllDirectories);
+            String[] RY = Directory.GetDirectories(ISO[0], "*人员*", SearchOption.AllDirectories);
             PersonArrange pa = new PersonArrange();
-            if (RY.Length > 0)
+            if (ISO.Length > 0)
             {
-                pa = GetPersonDetail(RY[0]);
+                pa = pa.GetPersonDetail(ISO[0]);
                 ShowMessage("项目人员表检索成功！");
             }
             progressBar.Value = 10;
-            String project_id = pa.project_id.Length>0 ?  pa.project_id:str.Substring(str.LastIndexOf("\\")+1,6) ;
-            String project_name = pa.project_name.Length > 0 ? pa.project_name:str.Substring(str.LastIndexOf("\\") + 7) ;
-           // Console.WriteLine(str.Substring(str.LastIndexOf("\\") + 1, 6) + "," + pa.project_id);
 
-            String[] ctsj = GetFold(XS[0], "*出图设校*", SearchOption.TopDirectoryOnly);
-            String[] zt = GetFold(ctsj[0], "*总图*", SearchOption.TopDirectoryOnly);
-            String[] nt = GetFold(ctsj[0], "*暖通*", SearchOption.TopDirectoryOnly);
-            String[] jz = GetFold(ctsj[0], "*建筑*", SearchOption.TopDirectoryOnly);
-            String[] gps = GetFold(ctsj[0], "*给排水*", SearchOption.TopDirectoryOnly);
-            String[] jg = GetFold(ctsj[0], "*结构*", SearchOption.TopDirectoryOnly);
-            String[] dq = GetFold(ctsj[0], "*电气*", SearchOption.TopDirectoryOnly);
+            String project_id = pa.project_id!=null?  pa.project_id:str.Substring(str.LastIndexOf("\\")+1,6) ;
+            String project_name = pa.project_name != null ? pa.project_name:str.Substring(str.LastIndexOf("\\") + 7) ;
+            String[] ctsj = Directory.GetDirectories(XS[0], "*出图设校*", SearchOption.TopDirectoryOnly);
+            String[] zt = Directory.GetDirectories(ctsj[0], "*总图*", SearchOption.TopDirectoryOnly);
+            String[] nt = Directory.GetDirectories(ctsj[0], "*暖通*", SearchOption.TopDirectoryOnly);
+            String[] jz = Directory.GetDirectories(ctsj[0], "*建筑*", SearchOption.TopDirectoryOnly);
+            String[] gps = Directory.GetDirectories(ctsj[0], "*给排水*", SearchOption.TopDirectoryOnly);
+            String[] jg = Directory.GetDirectories(ctsj[0], "*结构*", SearchOption.TopDirectoryOnly);
+            String[] dq = Directory.GetDirectories(ctsj[0], "*电*", SearchOption.TopDirectoryOnly);
 
-            //Console.WriteLine(zt[0]+nt[0]+jz[0]+gps[0]+jg[0]+dq[0]);
-
-
-            String[] zy = {nt[0], jz[0], gps[0] ,jg[0] , dq[0] };
+            String[] zy = new String[5];
+            if (nt.Length>0)
+            {
+                zy[0] = nt[0];
+            }
+            if (jz.Length > 0)
+            {
+                zy[1] = jz[0];
+            }
+            if (gps.Length > 0)
+            {
+                zy[2] = gps[0];
+            }
+            if (jg.Length > 0)
+            {
+                zy[3] = jg[0];
+            }
+            if (dq.Length > 0)
+            {
+                zy[4] = dq[0];
+            }
             List<String[]> res = new List<String[]>();
             int ColCount = 8;
             if (flag=="1_2")
             {
-                ColCount = 10;
+                ColCount = 15;
             }
+            //检索5大专业的打分信息
             foreach (String path in zy)
             {
-
-                String[] tmp = GetFold(path, "*", SearchOption.TopDirectoryOnly);
-                //Console.WriteLine(path+"下面的子项有"+tmp.Length);
+                if(path == null){
+                    continue;
+                }
+                String[] tmp = Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly);
                 String zttmp = path.Substring(path.LastIndexOf("\\") + 1);
                 foreach (String det in tmp)
                 {
@@ -329,13 +225,37 @@ namespace WorkFlow
                     resStr[5] = "N";
                     resStr[6] = "N";
                     resStr[ColCount-1] = det;
+                    int a = 0;
+                    if (flag=="1_2")
+                    {
+                        resStr[9] = "N";
+                        resStr[10] = "N";
+                        resStr[11] = "N";
+                        resStr[12] = "N";
+                        resStr[13] = "1";
+                        
+                        foreach (String[] tmpStr in pa.detail )
+                        {
+                            if (tmpStr[0]==resStr[2] && resStr[3].IndexOf(tmpStr[1].Substring(0, Math.Max(4, tmpStr[1].Length))) > -1)
+                             {
+                                    resStr[9] = tmpStr[4];
+                                    resStr[10] = tmpStr[5];
+                                    resStr[11] = tmpStr[6];
+                                    resStr[12] = pa.person_1;
+                                    resStr[13] = tmpStr[10];
+                                    break;
+                            }
+                           
+                          
+                        }
+
+                    }
                     //Console.WriteLine("\nr3="+resStr[3]+","+det);
                     if (resStr[3] != "000-楼-文件名不要带#号" && resStr[3] != "000-楼-文件名不要带#号")
                     {
-
-                        String[] zf = GetFold(det, "专负存档文件", SearchOption.TopDirectoryOnly);
-                        String[] jd = GetFold(det, "校对存档文件", SearchOption.TopDirectoryOnly);
-                        String[] sh = GetFold(det, "审核存档文件", SearchOption.TopDirectoryOnly);
+                        String[] zf = Directory.GetDirectories(det, "专负存档文件", SearchOption.TopDirectoryOnly);
+                        String[] jd = Directory.GetDirectories(det, "校对存档文件", SearchOption.TopDirectoryOnly);
+                        String[] sh = Directory.GetDirectories(det, "审核存档文件", SearchOption.TopDirectoryOnly);
                         //Connsole.WriteLine(zttmp + ":" + resStr[3] + ",zf=" + zf.Length + ",jd=" + jd.Length + ",sh=" + sh.Length);
                         if (zf.Length > 0)
                         {
@@ -345,7 +265,7 @@ namespace WorkFlow
                                 if (file1.Length > 0)
                                 {
 
-                                    String zfScore = GetScore(file1, 2);
+                                    String zfScore = function.GetScore(file1, 2);
                                     resStr[5] = zfScore.Split(',')[0];
                                     resStr[6] = zfScore.Split(',')[1];
                                 }else
@@ -353,8 +273,6 @@ namespace WorkFlow
                                     resStr[5] = "";
                                     resStr[6] = "";
                                 }
-
-
                             }else 
                             {
                                 if (file1.Length > 0)
@@ -369,61 +287,47 @@ namespace WorkFlow
                                 if (file2.Length > 0)
                                 {
 
-                                    String zfScore = GetScore(file2, 0);
+                                    String zfScore = function.GetScore(file2, 0);
                                     resStr[4] = zfScore;
                                 }
                                 else
                                 {
                                     resStr[4] = "";
                                 }
-
-
                             }
                             else
                             {
                                 if (file2.Length > 0)
                                     resStr[5] = "Y";
                             }
-                         
                         }
                         if (sh.Length > 0)
                         {
                             String file3 = GetFile(sh[0], pa.project_id, pa.project_name);
-                            if (file3.Length > 0)
-                                if (flag == "1_2")
+                            if (flag == "1_2")
+                             {
+                                if (file3.Length > 0)
                                 {
-                                    if (file3.Length > 0)
-                                    {
-
-                                        String zfScore = GetScore(file3, 1);
-                                        resStr[7] = zfScore.Split(',')[0];
-                                        resStr[8] = zfScore.Split(',')[1];
-                                    }
-                                    else
-                                    {
-                                        resStr[7] = "";
-                                        resStr[8] = "";
-                                    }
-
-
-                                }
+                                    String zfScore = function.GetScore(file3, 1);
+                                    resStr[7] = zfScore.Split(',')[0];
+                                    resStr[8] = zfScore.Split(',')[1];
+                                 }
                                 else
                                 {
-                                    if (file3.Length > 0)
-                                        resStr[6] = "Y";
-                                }
-                        }
+                                    resStr[7] = "";
+                                    resStr[8] = "";
+                                 }
 
+                            }
+                            else
+                            {
+                                if (file3.Length > 0)
+                                    resStr[6] = "Y";
+                            }
+                        }
                     }
                     else
                         continue;
-                    /*
-                    String sql = "merge into data0002 using (select '" + resStr[0] + "'  project_id ,'"
-                        + resStr[1] + "' project_name,'" + resStr[2] + "' zy,'" + resStr[3] + "' part,'" + resStr[4] + "' zf,'" + resStr[5] + "' jd,'" + resStr[6] + "' sh ,'" + resStr[7] + "' path from dual) tmp on (tmp.project_id=data0002.project_id and tmp.project_name=data0002.project_name and tmp.zy=data0002.zy and tmp.part=data0002.part) " +
-                        " when matched then update set zf=tmp.zf,jd=tmp.jd,sh=tmp.sh when not matched then insert values('" + resStr[0] + "','" + resStr[1] + "','" + resStr[2] + "','" + resStr[3] + "','" + resStr[4] + "','" + resStr[5] + "','" + resStr[6] + "','" + resStr[7] + "') ";
-                    */
-                    //Console.WriteLine(sql);
-                    //odb.ExecuteSQL(sql);
                     res.Add(resStr);
                 }
             }
@@ -433,76 +337,20 @@ namespace WorkFlow
             String exportFile = @Exportpath +"\\"+ dept + DateTime.Now.ToString("MM_dd") + "的评审进度.xls";
             if (flag == "1_2")
             {
-                header = new String[] { "项目编号", "项目名称", "专业", "子项目", "校对打分设计", "专负打分设计", "专负打分校对", "审核打分设计", "审核打分专负", "打分表路径" };
+                header = new String[] { "项目编号", "项目名称", "专业", "子项目", "校对打分设计", "专负打分设计", "专负打分校对", "审核打分设计", "审核打分专负","设计人","校对人","专负","审核人","系数", "打分表路径" };
                 exportFile = @Exportpath + "\\"+ dept + DateTime.Now.ToString("MM_dd") + "的打分明细.xls";
             }
             em.Write(exportFile, res, header);
             progressBar.Value = 100;
             ShowMessage("检索完成，结果见："+ exportFile);
         }
-
+        
         public String GetFile(String filePath, String project_id, String project_name)
         {
 
-            string[] files = Directory.GetFiles(filePath, "*分*.xls*", SearchOption.AllDirectories);
-            //Console.WriteLine("path="+filePath+",s="+ files.Length);
-            if (files.Length>0)
-            {
-               
-                FileInfo fi = new FileInfo(files[0]);
-                DateTime lastWT = fi.LastWriteTime;
-                if (files.Length>1) {
-                    foreach (String path in files)
-                    {
-                        FileInfo inf = new FileInfo(path);
-                        if (inf.LastWriteTime.CompareTo(lastWT)>0)
-                        {
-                            fi = inf;
-                            lastWT = inf.LastWriteTime;
-                        }
-                        //Console.WriteLine("file=" + inf.FullName + "," + inf.LastWriteTime);
-                    }
-                }
-                return fi.FullName;
-            }
-            return "";
+            string[] files = Directory.GetFiles(filePath, "*打分*.xls*", SearchOption.AllDirectories);
+            return function.GetLatestFile(files);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="filePath">打分表路径</param>
-        /// <param name="index">0:校对 1:审核 2:专负</param>
-        /// <returns></returns>
-        public String GetScore(String filePath,int index)
-        {
-            try
-            {
-                workbook = WorkbookFactory.Create(filePath);
-                ISheet sht = workbook.GetSheetAt(index);
-                if (index == 0)
-                {
-                    ICell cell = sht.GetRow(20).GetCell(3);
-                    return Value(cell);
-                }
-                else if (index == 1)
-                {
-                    return Value(sht.GetRow(20).GetCell(3)) +","+ Value(sht.GetRow(20).GetCell(4));
-                }
-                else if (index == 2)
-                {
-                    return Value(sht.GetRow(22).GetCell(3)) +","+Value(sht.GetRow(22).GetCell(4));
-                }
-                else
-                    return null;
-            }
-            catch (Exception e)
-            {
-                ShowMessage("e=" + e.ToString());
-                Console.WriteLine("e="+e.ToString());
-            }
-            return "";
-        }
-
 
         public void ShowMessage(String message)
         {
@@ -512,16 +360,9 @@ namespace WorkFlow
 
         private void FileExportPath_Click(object sender, EventArgs e)
         {
-            
-            SetFrom sf = new SetFrom();
-            //FileStream fs = new FileStream(System.IO.Directory.GetCurrentDirectory(),FileMode.OpenOrCreate,FileAccess.ReadWrite);
-            //sf.FileExportPath.Text=Exportpath;
+            SetFrom sf = new SetFrom(this.MessageText);
             sf.ShowDialog();
-            
-        
         }
-
-
 
         public void InitSetting()
         {
@@ -533,33 +374,15 @@ namespace WorkFlow
             }
             Exportpath = iniF.readIni("FileExportPath", "Path");
         }
-
+        /*
         private void MainForm_Paint(object sender, PaintEventArgs e)
         {
             ShowMessage("x="+this.Width.ToString()+ ",y="+this.Height.ToString());
         }
-
+        */
       
 
-        /*
-        private void detailGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            //if (detailGrid.IsCurrentCellDirty)
-            //{
-            var c = detailGrid.CurrentCell;
-            if(c!=null)
-                   Console.WriteLine(c.Value+",id="+ c.ColumnIndex);
-            //}
-        }
-        private void detailGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
-        {
-            if (detailGrid.IsCurrentCellDirty)
-            {
-               
-                detailGrid.CommitEdit(DataGridViewDataErrorContexts.Commit);
-            }
-        }
-        */
+      
 
     }
 }

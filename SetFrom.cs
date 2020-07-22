@@ -13,11 +13,16 @@ namespace WorkFlow
     public partial class SetFrom : Form
     {
         public String fileExportPath;
-        public SetFrom()
+        public RichTextBox pRTB;
+        /// <summary>
+        /// 设定界面
+        /// </summary>
+        /// <param name="rtb"></param>
+        public SetFrom(RichTextBox rtb)
         {
             InitSetting();
             InitializeComponent();
-            
+            pRTB = rtb;
         }
 
         public void  ButtonST_MouseClick(object sender, MouseEventArgs e)
@@ -34,7 +39,6 @@ namespace WorkFlow
             FolderBrowserDialog dialog = new FolderBrowserDialog
             {
                 Description = "请选择文件路径",
-                // dialog.RootFolder  = Environment.SpecialFolder.Desktop; 
                 SelectedPath = selectedPath
             };
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -69,6 +73,7 @@ namespace WorkFlow
                 Setting("C:/");
             }else
                 Setting(FileExportPath.Text);
+            pRTB.AppendText("文件导出路径设置为："+ FileExportPath.Text);
             this.Dispose(true);
         }
     }

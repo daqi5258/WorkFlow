@@ -172,7 +172,7 @@
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "和创设计-WorkFlow";
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
+            //this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
             this.TopMenu.ResumeLayout(false);
             this.TopMenu.PerformLayout();
             this.ResumeLayout(false);

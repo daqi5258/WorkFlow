@@ -1,12 +1,15 @@
 ﻿using NPOI.HSSF.UserModel;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
+using NPOI.SS.Util;
 using OracleInternal.SqlAndPlsqlParser;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
 namespace WorkFlow
 {
@@ -171,13 +174,133 @@ namespace WorkFlow
             fs.Close();
         }
 
-
-        public void Write(String filePath)
+        /// <summary>
+        /// closed
+        /// </summary>
+        /// <param name="filePath"></param>
+        public String  Write(String filePath,List<String[]> mString,DataGridView dataGridView, DataGridView dataGridView2)
         {
-            String name = @"人员安排表.xls";
-            FileStream fs = new FileStream(filePath + "\\" + name, FileMode.Create, FileAccess.ReadWrite);
-            HSSFWorkbook wb = new HSSFWorkbook(fs);
+            String fileName = filePath + "\\人员安排表.xls";
+            try
+            {
+                if (!Directory.Exists(filePath))
+                    Directory.CreateDirectory(filePath);
+                
+                FileInfo fileInfo = new FileInfo(fileName);
+                if (fileInfo.Exists)
+                {
+                    fileInfo.CopyTo(filePath + "\\" + DateTime.Now.ToString("yyyy-MM-dd_HH_mm") + "_" + fileInfo.Name);
+                }
 
+                IWorkbook wb = new HSSFWorkbook();
+                ISheet sheet0 = wb.CreateSheet("公共信息");
+                int mCount = mString.Count;
+                for (int i = 0; i < mCount; i++)
+                {
+                    String[] str = mString[i];
+                    IRow row = sheet0.CreateRow(i);
+                    for (int j = 0; j < str.Length || j < 4; j++)
+                    {
+                        ICell cell = row.CreateCell(j);
+                    }
+                }
+
+                CellRangeAddress cra = new CellRangeAddress(0, 0, 0, 3);
+                sheet0.AddMergedRegion(cra);
+                cra = new CellRangeAddress(1, 1, 1, 3);
+                sheet0.AddMergedRegion(cra);
+                cra = new CellRangeAddress(2, 2, 1, 3);
+                sheet0.AddMergedRegion(cra);
+                cra = new CellRangeAddress(3, 3, 1, 3);
+                sheet0.AddMergedRegion(cra);
+
+                ICellStyle dateStyle = wb.CreateCellStyle();//样式
+                dateStyle.Alignment = NPOI.SS.UserModel.HorizontalAlignment.Center;//文字水平对齐方式
+                dateStyle.VerticalAlignment = NPOI.SS.UserModel.VerticalAlignment.Center;//文字垂直对齐方式
+                ICell C0 = sheet0.GetRow(0).GetCell(0);
+                C0.SetCellValue("公共信息");
+                C0.CellStyle = dateStyle;
+                sheet0.GetRow(1).GetCell(1).CellStyle = dateStyle;
+                sheet0.GetRow(2).GetCell(1).CellStyle = dateStyle;
+                sheet0.GetRow(3).GetCell(1).CellStyle = dateStyle;
+                for (int i = 1; i < mString.Count; i++)
+                {
+                    String[] str = mString[i];
+                    IRow row = sheet0.GetRow(i);
+                    if (i < 4)
+                    {
+                        for (int j = 0; j < 2; j++)
+                        {
+                            ICell cell = row.GetCell(j);
+                            cell.SetCellValue(str[j]);
+                        }
+                    }
+                    else
+                    {
+                        for (int j = 0; j < str.Length; j++)
+                        {
+                            ICell cell = row.GetCell(j);
+                            cell.SetCellValue(str[j]);
+                        }
+                    }
+                }
+                sheet0.GetRow(mCount - 1).GetCell(0).SetCellValue("子项目序号");
+                sheet0.GetRow(mCount - 1).GetCell(1).SetCellValue("子项目类型");
+                sheet0.GetRow(mCount - 1).GetCell(2).SetCellValue("建筑类型");
+                sheet0.GetRow(mCount - 1).GetCell(3).SetCellValue("建筑面积");
+
+                int dataGridR = dataGridView.RowCount;
+                int dataGridC = dataGridView.ColumnCount;
+
+                for (int i = mCount; i < mCount + dataGridR; i++)
+                {
+                    IRow row = sheet0.CreateRow(i + 1);
+                    for (int j = 0; j < dataGridC; j++)
+                    {
+                        ICell cell = row.CreateCell(j);
+                        cell.SetCellValue("" + dataGridView.Rows[i - mCount].Cells[j].Value);
+                    }
+                }
+
+
+
+
+                ISheet sheet1 = wb.CreateSheet("人员安排信息");
+                int dataGridR1 = dataGridView2.RowCount;
+                int dataGridC1 = dataGridView2.ColumnCount;
+                if (dataGridC1 < 12)
+                    dataGridC1 = 12;
+                for (int i = 0; i < dataGridR1 + 1; i++)
+                {
+                    IRow row = sheet1.CreateRow(i);
+                    for (int j = 0; j < dataGridC1; j++)
+                    {
+                        ICell cell = row.CreateCell(j);
+                        if (i != 0)
+                            cell.SetCellValue("" + dataGridView2.Rows[i - 1].Cells[j].Value);
+                    }
+
+                }
+                sheet1.GetRow(0).GetCell(0).SetCellValue("专业");
+                sheet1.GetRow(0).GetCell(1).SetCellValue("文件夹开头");
+                sheet1.GetRow(0).GetCell(2).SetCellValue("子项号");
+                sheet1.GetRow(0).GetCell(3).SetCellValue("子项名称");
+                sheet1.GetRow(0).GetCell(4).SetCellValue("设计人");
+                sheet1.GetRow(0).GetCell(5).SetCellValue("校对人");
+                sheet1.GetRow(0).GetCell(6).SetCellValue("审核人");
+                sheet1.GetRow(0).GetCell(7).SetCellValue("审定人");
+                sheet1.GetRow(0).GetCell(8).SetCellValue("建筑类型");
+                sheet1.GetRow(0).GetCell(9).SetCellValue("建筑面积");
+                sheet1.GetRow(0).GetCell(10).SetCellValue("系数");
+                sheet1.GetRow(0).GetCell(11).SetCellValue("备注");
+                FileStream fs = fileInfo.Create();
+                wb.Write(fs);
+                fs.Close();
+            }catch (Exception e)
+            {
+                return "ERROR!"+e.ToString();
+            }
+            return fileName;
         }
 
         public static String Value(ICell cell)
@@ -213,5 +336,9 @@ namespace WorkFlow
             //Console.WriteLine("str="+str);
             return str;
         }
+
+
+
+       
     }
 }
