@@ -3,6 +3,7 @@ using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.SS.Util;
+using NPOI.XSSF.UserModel;
 using OracleInternal.SqlAndPlsqlParser;
 using System;
 using System.Collections.Generic;
@@ -63,29 +64,42 @@ namespace WorkFlow
             }    
         }
 
-        public List<HCType> Read(String filePath)
+        public  List<HCType> Read(String filePath)
         {
+           // kinds.Clear();
             IWorkbook workbook = WorkbookFactory.Create(filePath);
             if (workbook is null)
                 return null;
             ISheet sheet  = workbook.GetSheetAt(0);
             int rowCount = sheet.LastRowNum ;
             List<HCType> HCTypes = new List<HCType>();
-            for (int i=1;i<rowCount;i++)
+            String lastTypeName = "";
+            int count = 0;
+            for (int i=4;i<rowCount && count<3;i++)
             {
 
                 String Kind = Value(sheet.GetRow(i).GetCell(0));
-                String TypeName = Value(sheet.GetRow(i).GetCell(1));
-                String Area = Value(sheet.GetRow(i).GetCell(2));
-                String jz = Value(sheet.GetRow(i).GetCell(3));
-                String jg = Value(sheet.GetRow(i).GetCell(4));
-                String water = Value(sheet.GetRow(i).GetCell(5));
-                String ele = Value(sheet.GetRow(i).GetCell(6));
-                String nt = Value(sheet.GetRow(i).GetCell(7));
+                String TypeName = Value(sheet.GetRow(i).GetCell(0));
+                String Area = Value(sheet.GetRow(i).GetCell(1));
+                String jz = Value(sheet.GetRow(i).GetCell(2));
+                String jg = Value(sheet.GetRow(i).GetCell(3));
+                String water = Value(sheet.GetRow(i).GetCell(4));
+                String ele = Value(sheet.GetRow(i).GetCell(5));
+                String nt = Value(sheet.GetRow(i).GetCell(6));
                 Boolean flag = true;
+                if (TypeName.Length<1 && Area.Length<1)
+                {
+                    count++;
+                    continue;
+                }
+                else
+                    count = 0;
+                if (TypeName.Length > 0)
+                    lastTypeName = TypeName;
                 foreach (HCType hctype in HCTypes)
                 {
-                    if (hctype.TypeName == TypeName)
+                   
+                    if (hctype.TypeName == lastTypeName)
                     {
                         ScoreInArea sia = new ScoreInArea();
                         sia.Area = Area;
@@ -102,8 +116,8 @@ namespace WorkFlow
                 if (flag)
                 {
                     HCType hctype = new HCType();
-                    hctype.Kind = Kind;
-                    hctype.TypeName = TypeName;
+                    hctype.Kind = lastTypeName;
+                    hctype.TypeName = lastTypeName;
                     ScoreInArea sia = new ScoreInArea();
                     sia.Area = Area;
                     sia.jz = jz;
@@ -120,34 +134,56 @@ namespace WorkFlow
             return HCTypes;
         }
 
-        public void Write(String filepath,List<String[]> inf,String[] header)
+        public void Write(String filepath,List<String[]> inf,String[] header,String dept)
         {
             DateTime dt = DateTime.Now;
-            String shtStr = dt.ToString(@"MM_dd");
+            //String shtStr = dt.ToString(@"MM_dd");
             
             IWorkbook workbook = new HSSFWorkbook();
             try{
                 workbook = WorkbookFactory.Create(filepath);
-                
-                ISheet sht = workbook.GetSheetAt(0);
-                int RowCount = sht.LastRowNum+1;
-                
-                foreach (String[] str in inf)
+
+                ISheet sht = workbook.GetSheet(dept);
+                if (sht != null)
                 {
-                    Console.WriteLine(sht.SheetName + "," + RowCount+",lastR="+sht.LastRowNum);
-                    IRow row = sht.CreateRow(RowCount);
-                    for (int i = 0; i < str.Length; i++)
+                    int RowCount = sht.LastRowNum + 1;
+                    foreach (String[] str in inf)
                     {
-                        ICell cell = row.CreateCell(i);
-                        cell.SetCellValue(str[i]);
+                        IRow row = sht.CreateRow(RowCount);
+                        for (int i = 0; i < str.Length; i++)
+                        {
+                            ICell cell = row.CreateCell(i);
+                            cell.SetCellValue(str[i]);
+                        }
+                        RowCount++;
                     }
-                    RowCount++;
+                }
+                else
+                {
+                    sht = workbook.CreateSheet(dept);
+                    IRow Header = sht.CreateRow(0);
+                    for (int i = 0; i < header.Length; i++)
+                    {
+                        ICell cell = Header.CreateCell(i);
+                        cell.SetCellValue(header[i]);
+                    }
+                    int rowCount = 1;
+                    foreach (String[] str in inf)
+                    {
+                        IRow row = sht.CreateRow(rowCount);
+                        for (int i = 0; i < str.Length; i++)
+                        {
+                            ICell cell = row.CreateCell(i);
+                            cell.SetCellValue(str[i]);
+                        }
+                        rowCount++;
+                    }
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("\nfile not found:"+e);
-                ISheet sht = workbook.CreateSheet(shtStr);
+                ISheet sht = workbook.CreateSheet(dept);
                 IRow Header = sht.CreateRow(0);
                 for (int i = 0; i < header.Length; i++)
                 {
@@ -192,7 +228,7 @@ namespace WorkFlow
                     fileInfo.CopyTo(filePath + "\\" + DateTime.Now.ToString("yyyy-MM-dd_HH_mm") + "_" + fileInfo.Name);
                 }
 
-                IWorkbook wb = new HSSFWorkbook();
+                IWorkbook wb = new XSSFWorkbook();
                 ISheet sheet0 = wb.CreateSheet("公共信息");
                 int mCount = mString.Count;
                 for (int i = 0; i < mCount; i++)
@@ -261,7 +297,8 @@ namespace WorkFlow
                         cell.SetCellValue("" + dataGridView.Rows[i - mCount].Cells[j].Value);
                     }
                 }
-
+                //sheet0.CreateRow(100).CreateCell(0);
+                //sheet0.GetRow(100).GetCell(0).SetCellFormula("=Today()");
 
 
 
@@ -285,10 +322,10 @@ namespace WorkFlow
                 sheet1.GetRow(0).GetCell(1).SetCellValue("文件夹开头");
                 sheet1.GetRow(0).GetCell(2).SetCellValue("子项号");
                 sheet1.GetRow(0).GetCell(3).SetCellValue("子项名称");
-                sheet1.GetRow(0).GetCell(4).SetCellValue("设计人");
-                sheet1.GetRow(0).GetCell(5).SetCellValue("校对人");
-                sheet1.GetRow(0).GetCell(6).SetCellValue("审核人");
-                sheet1.GetRow(0).GetCell(7).SetCellValue("审定人");
+                sheet1.GetRow(0).GetCell(4).SetCellValue("审核人");
+                sheet1.GetRow(0).GetCell(5).SetCellValue("校核人");
+                sheet1.GetRow(0).GetCell(6).SetCellValue("校对人");
+                sheet1.GetRow(0).GetCell(7).SetCellValue("设计人");
                 sheet1.GetRow(0).GetCell(8).SetCellValue("建筑类型");
                 sheet1.GetRow(0).GetCell(9).SetCellValue("建筑面积");
                 sheet1.GetRow(0).GetCell(10).SetCellValue("系数");

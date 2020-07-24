@@ -2,6 +2,7 @@
 using NPOI.POIFS.FileSystem;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
+using Org.BouncyCastle.Crypto.Macs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,60 +24,32 @@ namespace WorkFlow
         public String Exportpath;
         public MainForm()
         {
-            InitializeComponent();
             InitSetting();
+            InitializeComponent();
+            
         }
 
        public void clear()
        {
             MainPanel.Controls.Clear();
        }
-
-        /// <summary>
-        /// 选择某个大项目，汇总该项目评分信息到指定目录
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void ZGB_Tool1_1_Click(object sender, EventArgs e)
         {
             clear();
-            Check("1_1");
-            /*
-            Form f = new Form
-            {
-                Text = "检索完成",
-                StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-            };
-           
-            f.ShowDialog();
-             */
-            /*
-            String str = selectFoldPath();
-            PersonArrange pa = getPersonDetail(str);
-            Console.WriteLine(pa.project_id+":"+pa.project_name);
-            oracleDB odb = new oracleDB();
-            String[] files = getFiles(str,pa.project_id,pa.project_name);
-
-            Console.WriteLine("\nlength="+files.Length);
-
-            String mergeSQL = @"merge into data0001 using (select substr(  SUBSTR(name, instr(name, '\',1,6)+1) , 1 , instr(SUBSTR(name, instr(name, '\',1,6)+1),'\',1,1)-1 ) nproject_name  , substr( "+
-           @" SUBSTR(name, instr(name, '\',1,4)+1), 1 , instr(SUBSTR(name, instr(name, '\',1,4)+1),'\',1,1)-1 " +
-           @" ) as ndept , substr(SUBSTR(name, instr(name, '\',1,5)+1) , 1, instr(SUBSTR(name, instr(name, '\',1,5)+1),'\',1,1)-1 " +
-           @" ) as nyear  , substr( SUBSTR(name, instr(name, '\',1,9)+1)  , 1 , instr(SUBSTR(name, instr(name, '\',1,9)+1),'\',1,1)-1 " +
-           @" ) as nteam , substr( SUBSTR(name, instr(name, '\',1,10)+1) , 1 , instr(SUBSTR(name, instr(name, '\',1,10)+1),'\',1,1)-1 "+
-           @" ) as npart  , substr( SUBSTR(name, instr(name, '\',1,11)+1) , 1 , instr(SUBSTR(name, instr(name, '\',1,11)+1),'\',1,1)-1) as ntype" +
-           @" , pkey from data0001 ) tmp on(tmp.pkey = data0001.pkey) when matched then  " +
-           @"   update set project_name = '" + pa.project_name+"',no='"+pa.project_id+"', deptment = tmp.ndept, team = tmp.nteam, type = tmp.ntype, part = tmp.npart, year = tmp.nyear ";
-            Console.WriteLine(@mergeSQL);
-            int c= odb.ExecuteSQL(@mergeSQL);
-            Console.WriteLine("c="+c);
-            */
-
+            FolderPanel fdPanel = new FolderPanel();
+            fdPanel.init(this.MessageText, "1_1", Exportpath, progressBar);
+            MainPanel.Controls.Add(fdPanel);
+            this.ClientSize = new System.Drawing.Size(800, 720);
+            this.ResumeLayout(false);
         }
         private void ZGB_Tool1_2_Click(object sender, EventArgs e)
         {
             clear();
-            Check("1_2");
+            FolderPanel fdPanel = new FolderPanel();
+            fdPanel.init(this.MessageText, "1_2", Exportpath, progressBar);
+            MainPanel.Controls.Add(fdPanel);
+            this.ClientSize = new System.Drawing.Size(800, 720);
+            this.ResumeLayout(false);
         }
 
         private void newPA_Click(object sender, EventArgs e)
@@ -85,16 +58,13 @@ namespace WorkFlow
             PAMain PAMain = new PAMain();
             PAMain.init(this.MessageText);
             MainPanel.Controls.Add(PAMain);
+            this.ClientSize = new System.Drawing.Size(1000, 800);
             this.ResumeLayout(false);
         }
 
         private void openPA_Click(object sender, EventArgs e)
         {
-            clear();
-            PAMain PAMain = new PAMain();
-            PAMain.init(this.MessageText);
-            MainPanel.Controls.Add(PAMain);
-            this.ResumeLayout(false);
+           
         }
 
 
@@ -109,15 +79,11 @@ namespace WorkFlow
         public String SelectFoldPath(String selectedPath)
         {
             String path = null;
-            FolderBrowserDialog dialog = new FolderBrowserDialog
+            FolderBrowserForm dialog = new FolderBrowserForm();
+            dialog.DirectoryPath = selectedPath;
+            if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                Description = "请选择文件路径",
-                // dialog.RootFolder  = Environment.SpecialFolder.Desktop; 
-                SelectedPath = selectedPath
-            };
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                path = dialog.SelectedPath;
+                path = dialog.DirectoryPath;
             }
             return path;
         }
@@ -138,8 +104,8 @@ namespace WorkFlow
             return files1;
         }
         */
-       
 
+        /*
         public void Check(String flag)
         {
             progressBar.Value =0;
@@ -156,7 +122,10 @@ namespace WorkFlow
             if (str.Length<0)
                 return;
             String[] XS = Directory.GetDirectories(str, "*项师*", SearchOption.TopDirectoryOnly);
-            
+            if(XS==null){
+                ShowMessage("没有相师目录，操作失败！");
+                return;
+            }
             //人员信息表
             String[] ISO = Directory.GetDirectories(XS[0],"*ISO*", SearchOption.TopDirectoryOnly);
             //String[] ISOBG = getFold(ISO[0], "*ISO*", SearchOption.TopDirectoryOnly);
@@ -164,13 +133,32 @@ namespace WorkFlow
             PersonArrange pa = new PersonArrange();
             if (ISO.Length > 0)
             {
-                pa = pa.GetPersonDetail(ISO[0]);
-                ShowMessage("项目人员表检索成功！");
+                try
+                {
+                    pa = pa.GetPersonDetail(ISO[0]);
+                    ShowMessage("人员安排表检索成功！");
+                }
+                catch (Exception e)
+                {
+                    ShowMessage("人员安排表读取失败！");
+                }
             }
             progressBar.Value = 10;
 
-            String project_id = pa.project_id!=null?  pa.project_id:str.Substring(str.LastIndexOf("\\")+1,6) ;
-            String project_name = pa.project_name != null ? pa.project_name:str.Substring(str.LastIndexOf("\\") + 7) ;
+            Console.WriteLine("str="+str);
+            String project_id = str.Substring(str.LastIndexOf("\\")+1,6) ;
+            String project_name =  str.Substring(str.LastIndexOf("\\") + 7) ;
+            if (pa != null)
+            {
+                if (pa.project_id != null)
+                {
+                    project_id = pa.project_id;
+                }
+                if (pa.project_name != null)
+                {
+                    project_name = pa.project_name;
+                }
+            }
             String[] ctsj = Directory.GetDirectories(XS[0], "*出图设校*", SearchOption.TopDirectoryOnly);
             String[] zt = Directory.GetDirectories(ctsj[0], "*总图*", SearchOption.TopDirectoryOnly);
             String[] nt = Directory.GetDirectories(ctsj[0], "*暖通*", SearchOption.TopDirectoryOnly);
@@ -204,7 +192,7 @@ namespace WorkFlow
             int ColCount = 8;
             if (flag=="1_2")
             {
-                ColCount = 15;
+                ColCount = 14;
             }
             //检索5大专业的打分信息
             foreach (String path in zy)
@@ -232,23 +220,24 @@ namespace WorkFlow
                         resStr[10] = "N";
                         resStr[11] = "N";
                         resStr[12] = "N";
-                        resStr[13] = "1";
-                        
-                        foreach (String[] tmpStr in pa.detail )
+                        //resStr[13] = "1";
+
+                        if (pa != null && pa.detail.Count > 0)
                         {
-                            if (tmpStr[0]==resStr[2] && resStr[3].IndexOf(tmpStr[1].Substring(0, Math.Max(4, tmpStr[1].Length))) > -1)
-                             {
+                            foreach (String[] tmpStr in pa.detail)
+                            {
+                                if (tmpStr[0] == resStr[2] && resStr[3].IndexOf(tmpStr[1].Substring(0, Math.Max(4, tmpStr[1].Length))) > -1)
+                                {
                                     resStr[9] = tmpStr[4];
                                     resStr[10] = tmpStr[5];
                                     resStr[11] = tmpStr[6];
-                                    resStr[12] = pa.person_1;
-                                    resStr[13] = tmpStr[10];
+                                    resStr[12] = tmpStr[7];
+                                    //resStr[13] = tmpStr[10];
                                     break;
+                                }
                             }
-                           
-                          
-                        }
 
+                        }
                     }
                     //Console.WriteLine("\nr3="+resStr[3]+","+det);
                     if (resStr[3] != "000-楼-文件名不要带#号" && resStr[3] != "000-楼-文件名不要带#号")
@@ -259,7 +248,7 @@ namespace WorkFlow
                         //Connsole.WriteLine(zttmp + ":" + resStr[3] + ",zf=" + zf.Length + ",jd=" + jd.Length + ",sh=" + sh.Length);
                         if (zf.Length > 0)
                         {
-                            String file1 = GetFile(zf[0], pa.project_id, pa.project_name);
+                            String file1 = GetFile(zf[0]);
                             if (flag == "1_2")
                             {
                                 if (file1.Length > 0)
@@ -281,7 +270,7 @@ namespace WorkFlow
                         }
                         if (jd.Length > 0)
                         {
-                            String file2 = GetFile(jd[0], pa.project_id, pa.project_name);
+                            String file2 = GetFile(jd[0]);
                             if (flag == "1_2")
                             {
                                 if (file2.Length > 0)
@@ -303,7 +292,7 @@ namespace WorkFlow
                         }
                         if (sh.Length > 0)
                         {
-                            String file3 = GetFile(sh[0], pa.project_id, pa.project_name);
+                            String file3 = GetFile(sh[0]);
                             if (flag == "1_2")
                              {
                                 if (file3.Length > 0)
@@ -337,21 +326,21 @@ namespace WorkFlow
             String exportFile = @Exportpath +"\\"+ dept + DateTime.Now.ToString("MM_dd") + "的评审进度.xls";
             if (flag == "1_2")
             {
-                header = new String[] { "项目编号", "项目名称", "专业", "子项目", "校对打分设计", "专负打分设计", "专负打分校对", "审核打分设计", "审核打分专负","设计人","校对人","专负","审核人","系数", "打分表路径" };
+                header = new String[] { "项目编号", "项目名称", "专业", "子项目", "校对打分设计", "专负打分设计", "专负打分校对", "审核打分设计", "审核打分专负","审核人","专负（校核人）","校对人","设计人","系数", "打分表路径" };
                 exportFile = @Exportpath + "\\"+ dept + DateTime.Now.ToString("MM_dd") + "的打分明细.xls";
             }
-            em.Write(exportFile, res, header);
+            em.Write(exportFile, res, header,dept);
             progressBar.Value = 100;
             ShowMessage("检索完成，结果见："+ exportFile);
         }
-        
-        public String GetFile(String filePath, String project_id, String project_name)
+       
+        public String GetFile(String filePath)
         {
 
             string[] files = Directory.GetFiles(filePath, "*打分*.xls*", SearchOption.AllDirectories);
             return function.GetLatestFile(files);
         }
-
+         */
         public void ShowMessage(String message)
         {
             RichTextBox rtb = this.MessageText;
@@ -381,8 +370,5 @@ namespace WorkFlow
         }
         */
       
-
-      
-
     }
 }

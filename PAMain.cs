@@ -134,7 +134,7 @@ namespace WorkFlow
             };
             DataGridViewComboBoxColumn C8 = new DataGridViewComboBoxColumn()
             {
-                Name = "建筑类型",
+                Name = "建筑类型1",
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill
             };
             /*
@@ -146,7 +146,7 @@ namespace WorkFlow
                 C8.Items.Add(str);
             }
             */
-            String typePath = @"C: \Users\jdq\Desktop\HCType.xls";
+            String typePath = @"C: \Users\jdq\Desktop\打分规则.xlsx";
             HCTypes = new List<HCType>();
             ExcelManagement em = new ExcelManagement();
             HCTypes = em.Read(typePath);
@@ -157,7 +157,7 @@ namespace WorkFlow
 
             DataGridViewComboBoxColumn C9 = new DataGridViewComboBoxColumn()
             {
-                Name = "建筑面积",
+                Name = "建筑类型2",
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
                 ReadOnly = true
 
@@ -168,7 +168,9 @@ namespace WorkFlow
                 AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill,
                 // Frozen = true
                 ReadOnly = true
+                
             };
+            C10.Visible = false;
             DataGridViewTextBoxColumn C11 = new DataGridViewTextBoxColumn()
             {
                 Name = "备注",
@@ -191,7 +193,7 @@ namespace WorkFlow
             C0,C1,C2,
             C3,C4,C5,
             C6,C7,C8,
-            C9,C10,C11
+            C9,C11
             
             });
             DataGridView.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -236,23 +238,21 @@ namespace WorkFlow
                 int rowId = c.DataGridView.CurrentCell.RowIndex;
                 int colId = c.DataGridView.CurrentCell.ColumnIndex;
                 
-                
                 if (colId==8)
                 {
                     String value = c.Value.ToString();
-                   // int count = 0;
                     foreach (HCType hCType in  HCTypes)
                     {
                         if (hCType.TypeName==value)
                         {
-                            //Console.WriteLine("类型：" + value+",面积数："+ hCType.Detail.Count);
                             DataGridViewComboBoxCell cell = DataGridView.Rows[rowId].Cells[9] as DataGridViewComboBoxCell;
                             if(cell.Items.Count>0)
                                 cell.Items.Clear();
                             if (hCType.Detail.Count==1)
                             {
                                  cell.Items.Add(hCType.Detail[0].Area);
-                                 cell.Value = hCType.Detail[0].Area;
+                                 cell.Value = cell.Items[0];
+                                /*
                                 if( DataGridView.Rows[rowId].Cells[0].Value.ToString().Contains("建筑"))
                                     DataGridView.Rows[rowId].Cells[10].Value = hCType.Detail[0].jz;
                                 else if (DataGridView.Rows[rowId].Cells[0].Value.ToString().Contains("结构"))
@@ -263,14 +263,16 @@ namespace WorkFlow
                                     DataGridView.Rows[rowId].Cells[10].Value = hCType.Detail[0].ele;
                                 else if (DataGridView.Rows[rowId].Cells[0].Value.ToString().Contains("暖通"))
                                     DataGridView.Rows[rowId].Cells[10].Value = hCType.Detail[0].nt;
-                                cell.ReadOnly = true;
+                                */
+                                cell.ReadOnly = false;
                             }
                             else if (hCType.Detail.Count> 1){
                                  foreach (ScoreInArea sia in hCType.Detail) {
                                     cell.Items.Add(sia.Area);
                                     //count++;
                                   }
-                                cell.Value= hCType.Detail[0].Area;//Combox必须有默认值，不然报错
+                                cell.Value= cell.Items[0];//Combox必须有默认值，不然报错
+                                /*
                                 if (DataGridView.Rows[rowId].Cells[0].Value.ToString().Contains("建筑"))
                                     DataGridView.Rows[rowId].Cells[10].Value = hCType.Detail[0].jz;
                                 else if (DataGridView.Rows[rowId].Cells[0].Value.ToString().Contains("结构"))
@@ -281,13 +283,14 @@ namespace WorkFlow
                                     DataGridView.Rows[rowId].Cells[10].Value = hCType.Detail[0].ele;
                                 else if (DataGridView.Rows[rowId].Cells[0].Value.ToString().Contains("暖通"))
                                     DataGridView.Rows[rowId].Cells[10].Value = hCType.Detail[0].nt;
+                                */
                                 cell.ReadOnly = false;
                             }
-                            //Console.WriteLine("c="+count);
                             break;
                         }
                     }
                 }
+                /*
                 if (colId == 9|| colId == 0)
                 {
                     DataGridViewCell C8 = DataGridView.Rows[rowId].Cells[8];
@@ -321,11 +324,8 @@ namespace WorkFlow
 
                         }
                     }
-
-                }
-               
+                }*/
             }
-
         }
         private void DataGridView_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {

@@ -1,5 +1,6 @@
 ﻿using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
+using Org.BouncyCastle.Math.EC.Multiplier;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,20 +15,21 @@ namespace WorkFlow
     /// </summary>
     public class PersonArrange
     {
-      
+        
         public String project_id { get; set; }//工程编号
         public String construct_company { get; set; }//建筑公司
         public String project_name { get; set; }//工程名称
-        public String person_project{ get; set; }//项目工程师
-        public String person_1 { get; set; }//总图、建筑专负
-        public String person_2 { get; set; }//结构专负
-        public String person_3 { get; set; }//给排水专负
-        public String person_4 { get; set; }//电气专负
-        public String person_5 { get; set; }//暖通专负
-        public List<DetailArrange> das;//子项目信息
-        public List<String[]> detail;
+        public String person_project{ get; set; }//项目负责人
+        public String person_construct { get; set; }//注册建筑师
+        /// <summary>
+        /// 项目秘书
+        /// </summary>
+        public String person_secretary { get; set; }
+        public List<String[]> detail;//人员安排
         public PersonArrange()
         {
+            project_id = null;
+            project_name = null;
             detail = new List<string[]>();
         }
 
@@ -41,24 +43,7 @@ namespace WorkFlow
             return das;
         }
         */
-        public List<DetailArrange> deteleDA(DetailArrange da)
-        {
-            if (das.Contains(da))
-            {
-                das.Remove(da);
-            }
-            return das;
-        }
-
-        public void setDAS (List<DetailArrange>  tmpLDA)
-        {            
-             das=tmpLDA;
-        }
-
-        public List<DetailArrange> get()
-        {
-            return das;
-        }
+       
 
         /// <summary>
         /// 读取人员安排表
@@ -67,64 +52,72 @@ namespace WorkFlow
         /// <returns></returns>
         public PersonArrange GetPersonDetail(String filepath)
         {
-            IWorkbook workbook = new HSSFWorkbook();
-            PersonArrange pa = new PersonArrange();
-            string[] files1 = Directory.GetFiles(filepath, "*人员安排*.xls*", SearchOption.AllDirectories);
             try
             {
-                workbook = WorkbookFactory.Create(function.GetLatestFile(files1));
+                IWorkbook workbook = new HSSFWorkbook();
+                PersonArrange pa = new PersonArrange();
+                string[] files1 = Directory.GetFiles(filepath, "*人员安排*.xls*", SearchOption.AllDirectories);
+                try
+                {
+                    workbook = WorkbookFactory.Create(function.GetLatestFile(files1));
+                }
+                catch (Exception e)
+                {
+                    return pa;
+                }
+                if (workbook is null)
+                {
+                    Console.WriteLine("workbook is null");
+                    return pa;
+                }
+                ISheet sheet = workbook.GetSheetAt(0);
+                pa.project_id = sheet.GetRow(1).GetCell(1) == null ? "" : sheet.GetRow(1).GetCell(1).ToString();
+                pa.construct_company = sheet.GetRow(2).GetCell(1) == null ? "" : sheet.GetRow(2).GetCell(1).ToString();
+                pa.project_name = sheet.GetRow(3).GetCell(1) == null ? "" : sheet.GetRow(3).GetCell(1).ToString();
+                pa.person_project = sheet.GetRow(4).GetCell(1) == null ? "" : sheet.GetRow(4).GetCell(1).ToString();
+                pa.person_construct = sheet.GetRow(5).GetCell(1) == null ? "" : sheet.GetRow(5).GetCell(1).ToString();
+                pa.person_secretary = sheet.GetRow(6).GetCell(1) == null ? "" : sheet.GetRow(6).GetCell(1).ToString();
+               
+                List<String[]> lda = new List<String[]>();
+                Boolean ck = false;
+                String lastName = "";
+                int startRow = 0;
+                for (int i = 1; i < sheet.LastRowNum; i++)
+                {
+                    if (sheet.GetRow(i)!=null && sheet.GetRow(i).GetCell(0)!=null && function.Value(sheet.GetRow(i).GetCell(0))=="人员安排表")
+                    {
+                        ck = true;
+                        Console.WriteLine("start row="+i);
+                        startRow = i + 2;
+                    }
+                    if (sheet.GetRow(i) != null && ck && i>=startRow)
+                    {
+                        IRow row = sheet.GetRow(i);
+                        int colCount = row.LastCellNum;
+                        String[] str = new string[colCount];
+                        if(function.Value(row.GetCell(0)).Length>0)
+                            lastName = function.Value(row.GetCell(0));
+                        str[0] = lastName;
+                        for (int j = 1; j < colCount; j++)
+                        {
+                            str[j] = function.Value(row.GetCell(j));
+                        };
+                        if (str[1].Length>0)
+                        {
+                            lda.Add(str);
+                        }
+                       
+                    }
+                }
+                Console.WriteLine("子项目有："+lda.Count);
+                pa.setDetail(lda);
+                return pa;
             }
             catch (Exception e)
             {
-                return pa;
+                Console.WriteLine("e="+e.ToString());
+                return null;
             }
-            if (workbook is null)
-            {
-                Console.WriteLine("workbook is null");
-                return pa;
-            }
-            ISheet sheet = workbook.GetSheetAt(0);
-
-            pa.project_name = sheet.GetRow(3).GetCell(1) == null ? "" : sheet.GetRow(3).GetCell(1).ToString();
-            pa.construct_company = sheet.GetRow(2).GetCell(1) == null ? "" : sheet.GetRow(2).GetCell(1).ToString();
-            pa.project_id = sheet.GetRow(1).GetCell(1) == null ? "" : sheet.GetRow(1).GetCell(1).ToString();
-            pa.person_project = sheet.GetRow(4).GetCell(1) == null ? "" : sheet.GetRow(4).GetCell(1).ToString();
-
-            pa.person_1 = sheet.GetRow(6).GetCell(1) == null ? "" : sheet.GetRow(6).GetCell(1).ToString();
-            pa.person_2 = sheet.GetRow(7).GetCell(1) == null ? "" : sheet.GetRow(7).GetCell(1).ToString();
-            pa.person_3 = sheet.GetRow(8).GetCell(1) == null ? "" : sheet.GetRow(8).GetCell(1).ToString();
-            pa.person_4 = sheet.GetRow(9).GetCell(1) == null ? "" : sheet.GetRow(9).GetCell(1).ToString();
-            pa.person_5 = sheet.GetRow(10).GetCell(1) == null ? "" : sheet.GetRow(10).GetCell(1).ToString();
-            ISheet sheet1 = workbook.GetSheetAt(1);
-            List<String[] > lda = new List<String[]>();
-            for (int i = 1; i < sheet1.LastRowNum; i++)
-            {
-                if (sheet.GetRow(i) != null)
-                {
-                    IRow row = sheet1.GetRow(i);
-                    int colCount = row.LastCellNum;
-                    String[] str = new string[colCount];
-                    for (int j=0;j< colCount;j++) 
-                    {
-                        str[j] = function.Value(row.GetCell(j));   
-                    };
-                    lda.Add(str);
-                }
-            }
-            
-            pa.setDetail(lda);
-
-            foreach (String[] t in detail)
-            {
-                String str = "";
-                for (int i = 0; i < t.Length; i++)
-                {
-                    str += i + "=" + t[i] + " ";
-                }
-                Console.WriteLine(str);
-            }
-            Console.WriteLine("d l="+detail.Count);
-            return pa;
 
         }
 

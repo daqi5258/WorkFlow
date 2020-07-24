@@ -32,7 +32,7 @@ namespace WorkFlow
             //Setting();
         }
 
-
+        /*
         public String SelectFoldPath(String selectedPath)
         {
             String path = null;
@@ -47,7 +47,24 @@ namespace WorkFlow
             }
             return path;
         }
-
+        */
+        /// <summary>
+        /// 获取项目文件路径
+        /// </summary>
+        /// <returns>大项目的顶层文件夹路径</returns>
+        public String SelectFoldPath(String selectedPath)
+        {
+            String path = null;
+            FolderBrowserForm dialog = new FolderBrowserForm();
+            dialog.DirectoryPath = selectedPath;
+            if (dialog.ShowDialog(this) == DialogResult.OK)
+            {
+                path = dialog.DirectoryPath;
+            }
+            else
+                path = selectedPath;
+            return path;
+        }
 
         public void Setting(String filePath)
         {

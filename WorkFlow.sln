@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkFlow", "WorkFlow.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "test", "..\test\test.csproj", "{288C5E7A-3148-44AE-8BA3-575028DDDF10}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoCad", "..\AutoCad\AutoCad.csproj", "{794D0443-9DDD-4B23-8062-8336EE89CCE2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{288C5E7A-3148-44AE-8BA3-575028DDDF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{288C5E7A-3148-44AE-8BA3-575028DDDF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{288C5E7A-3148-44AE-8BA3-575028DDDF10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{794D0443-9DDD-4B23-8062-8336EE89CCE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{794D0443-9DDD-4B23-8062-8336EE89CCE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{794D0443-9DDD-4B23-8062-8336EE89CCE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{794D0443-9DDD-4B23-8062-8336EE89CCE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

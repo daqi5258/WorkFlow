@@ -1,5 +1,8 @@
-﻿using System;
+﻿using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -24,7 +27,7 @@ namespace WorkFlow
         {
             Detail = new List<ScoreInArea>();
         }
-        public HCType(String kind,String typeName)
+        public HCType(String kind, String typeName)
         {
             this.Kind = kind;
             this.TypeName = typeName;
@@ -40,13 +43,16 @@ namespace WorkFlow
         }
         public void AddScoreInArea(ScoreInArea scoreInArea)
         {
-            if (Detail.Count > 0) {
+            if (Detail.Count > 0)
+            {
                 if (!Detail.Contains(scoreInArea))
                     Detail.Add(scoreInArea);
-            }else
+            }
+            else
                 Detail.Add(scoreInArea);
         }
 
-       
+
+      
     }
 }

@@ -71,7 +71,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="excelManagement.cs" />
+    <Compile Include="FolderBrowserForm.cs" />
+    <Compile Include="FolderPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="function.cs" />
+    <Compile Include="GetScore.cs" />
     <Compile Include="HCType.cs" />
     <Compile Include="iniFile.cs" />
     <Compile Include="MainForm.cs">

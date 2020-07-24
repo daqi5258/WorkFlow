@@ -1,9 +1,12 @@
-﻿using NPOI.SS.UserModel;
+﻿using NPOI.OpenXmlFormats.Dml;
+using NPOI.SS.UserModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace WorkFlow
 {
@@ -32,9 +35,9 @@ namespace WorkFlow
             else if (cell.CellType == CellType.Formula)
             {
                 if (cell.CachedFormulaResultType == CellType.Numeric)
-                    str = cell.NumericCellValue.ToString("#0.00 ") + "";
+                    str = ""+cell.NumericCellValue.ToString("#0.00 ");
                 else if (cell.CachedFormulaResultType == CellType.Error)
-                    str = cell.ErrorCellValue.ToString("#0.00 ");
+                    str = "";
             }
             else if (cell.CellType == CellType.Error)
             {
@@ -87,6 +90,7 @@ namespace WorkFlow
         {
             try
             {
+                filePath = filePath.Replace("~$", "");
                 IWorkbook workbook = WorkbookFactory.Create(filePath);
                 if (workbook == null)
                     return ",,";
@@ -114,5 +118,28 @@ namespace WorkFlow
             }
             return "";
         }
+
+       public static double StringToDouble(String str)
+        {
+            if (str == null)
+            {
+                return 0.00;
+            }
+            else if (str == "")
+            {
+                return 0.00;
+            }
+            else if (Regex.IsMatch(str.Trim(), @"^[-]?\d*[.]?\d*$"))
+            {
+                return double.Parse(str);
+            }
+            else
+            {
+                Console.WriteLine("str="+ str+","+ Regex.IsMatch(str, @"^[-]?\d*[.]?\d*$"));
+                return 0.00;
+            }
+
+        }
+
     }
 }

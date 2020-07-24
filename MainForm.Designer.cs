@@ -146,6 +146,7 @@
             this.openPA.Size = new System.Drawing.Size(180, 22);
             this.openPA.Text = "打开文件";
             this.openPA.Click += new System.EventHandler(this.openPA_Click);
+            this.openPA.Visible = false;
             // 
             // newPA
             // 
@@ -160,7 +161,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.ClientSize = new System.Drawing.Size(984, 720);
+            this.ClientSize = new System.Drawing.Size(800, 720);
             this.Controls.Add(this.MainPanel);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.MessageText);
@@ -168,7 +169,7 @@
             this.Cursor = System.Windows.Forms.Cursors.Default;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.TopMenu;
-            this.MinimumSize = new System.Drawing.Size(1100, 758);
+            this.MinimumSize = new System.Drawing.Size(700, 450);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "和创设计-WorkFlow";
