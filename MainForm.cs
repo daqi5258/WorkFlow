@@ -22,6 +22,7 @@ namespace WorkFlow
         
         public IWorkbook workbook;
         public String Exportpath;
+        public String ScoreInAreaPath;
         public MainForm()
         {
             InitSetting();
@@ -37,7 +38,7 @@ namespace WorkFlow
         {
             clear();
             FolderPanel fdPanel = new FolderPanel();
-            fdPanel.init(this.MessageText, "1_1", Exportpath, progressBar);
+            fdPanel.init(this.MessageText, "1_1", Exportpath, progressBar, ScoreInAreaPath);
             MainPanel.Controls.Add(fdPanel);
             this.ClientSize = new System.Drawing.Size(800, 720);
             this.ResumeLayout(false);
@@ -46,7 +47,7 @@ namespace WorkFlow
         {
             clear();
             FolderPanel fdPanel = new FolderPanel();
-            fdPanel.init(this.MessageText, "1_2", Exportpath, progressBar);
+            fdPanel.init(this.MessageText, "1_2", Exportpath, progressBar, ScoreInAreaPath);
             MainPanel.Controls.Add(fdPanel);
             this.ClientSize = new System.Drawing.Size(800, 720);
             this.ResumeLayout(false);
@@ -67,11 +68,19 @@ namespace WorkFlow
            
         }
 
+        private void ScoreInArea_Click(object sender, EventArgs e)
+        {
 
+            SetFrom sf = new SetFrom(this.MessageText,"ScoreInAreaPath");
+            sf.ShowDialog();
+        }
 
+        private void FileExportPath_Click(object sender, EventArgs e)
+        {
+            SetFrom sf = new SetFrom(this.MessageText, "fileExportPath");
+            sf.ShowDialog();
+        }
 
-
-      
         /// <summary>
         /// 获取项目文件路径
         /// </summary>
@@ -347,12 +356,7 @@ namespace WorkFlow
             rtb.AppendText("\n"+message);
         }
 
-        private void FileExportPath_Click(object sender, EventArgs e)
-        {
-            SetFrom sf = new SetFrom(this.MessageText);
-            sf.ShowDialog();
-        }
-
+      
         public void InitSetting()
         {
             iniFile iniF = new iniFile();
@@ -360,15 +364,20 @@ namespace WorkFlow
             if (!iniF.exists())
             {
                 iniF.writeIni("FileExportPath", "Path", @"C:/");
+                iniF.writeIni("ScoreInAreaPath", "Path", @"C:/");
             }
             Exportpath = iniF.readIni("FileExportPath", "Path");
+            ScoreInAreaPath = iniF.readIni("ScoreInAreaPath","Path");
         }
+
+        
+
         /*
-        private void MainForm_Paint(object sender, PaintEventArgs e)
-        {
-            ShowMessage("x="+this.Width.ToString()+ ",y="+this.Height.ToString());
-        }
-        */
-      
+private void MainForm_Paint(object sender, PaintEventArgs e)
+{
+   ShowMessage("x="+this.Width.ToString()+ ",y="+this.Height.ToString());
+}
+*/
+
     }
 }

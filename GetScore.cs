@@ -10,13 +10,23 @@ namespace WorkFlow
 {
     class GetScore
     {
-       
-        public static String Check(List<String> folders,String Exportpath, String flag,ref int c,ref String unFolder)//,ref ProgressBar progressBar,ref RichTextBox rtb)
+       /// <summary>
+       /// 检索打分表
+       /// </summary>
+       /// <param name="folders">项目目录集</param>
+       /// <param name="Exportpath">导出结果位置</param>
+       /// <param name="flag">统计分数或是否打分标志</param>
+       /// <param name="c">检索项目成功的数目</param>
+       /// <param name="unFolder">未检索成功的项目</param>
+       /// <param name="ScoreInAreaPath">打分规则文件目录</param>
+       /// <returns></returns>
+        public static String Check(List<String> folders,String Exportpath, String flag,ref int c,ref String unFolder,String ScoreInAreaPath)//,ref ProgressBar progressBar,ref RichTextBox rtb)
         {
             ExcelManagement em = new ExcelManagement();
             try
             {
-                HCTypes = em.Read(@"C:\Users\jdq\Desktop\打分规则.xlsx");
+                string[] files = Directory.GetFiles(ScoreInAreaPath, "*打分规则*.xls*", SearchOption.AllDirectories);
+                HCTypes = em.Read(function.GetLatestFile(files));
             }
             catch (FileNotFoundException e)
             {
@@ -145,12 +155,12 @@ namespace WorkFlow
                                 {
                                     if ((tmpStr[0].IndexOf(zttmp)>-1 || zttmp.IndexOf(tmpStr[0]) > -1) && tmpStr[1].Substring(0,4)==resStr[3].Substring(0,4) )
                                     {
-                                        resStr[4] = tmpStr[7];
-                                        resStr[5] = tmpStr[4];
-                                        resStr[6] = tmpStr[6];
-                                        resStr[7] = tmpStr[5];
-                                        resStr[14] = tmpStr[8];
-                                        resStr[15] = tmpStr[9];
+                                        resStr[4] = tmpStr[6];
+                                        resStr[5] = tmpStr[3];
+                                        resStr[6] = tmpStr[5];
+                                        resStr[7] = tmpStr[4];
+                                        resStr[14] = tmpStr[7];
+                                        resStr[15] = tmpStr[8];
 
                                         if (HCTypes != null)
                                         {
@@ -266,7 +276,7 @@ namespace WorkFlow
                                         resStr[6] = "Y";
                                 }
                             }
-                            resStr[13] = ((function.StringToDouble(resStr[10]) + function.StringToDouble(resStr[11]) + function.StringToDouble(resStr[12])) / 3 ).ToString("#0.00");
+                            resStr[13] = (function.StringToDouble(resStr[10])*0.3 + function.StringToDouble(resStr[11])*0.4 + function.StringToDouble(resStr[12])*0.3 ).ToString("#0.00");
 
                         }
                         else
@@ -282,8 +292,14 @@ namespace WorkFlow
                     exportFile = @Exportpath + "\\" + DateTime.Now.ToString("yyyy") + "年施工图打分明细汇总表" + DateTime.Now.ToString("yyyyMMdd") + ".xls";
                 }
                 
-                em.Write(exportFile, res, header,dept);
-                c++;
+                String result= em.Write(exportFile, res, header,dept);
+                if (result == "OK")
+                {
+                    c++;
+                }
+                else
+                    unFolder += result;
+              
                 
             } 
             return "检索完成，结果见文件夹： " + Exportpath;

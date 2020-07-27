@@ -35,9 +35,18 @@ namespace WorkFlow
             else if (cell.CellType == CellType.Formula)
             {
                 if (cell.CachedFormulaResultType == CellType.Numeric)
-                    str = ""+cell.NumericCellValue.ToString("#0.00 ");
+                    str = "" + cell.NumericCellValue.ToString("#0.00 ");
                 else if (cell.CachedFormulaResultType == CellType.Error)
-                    str = "";
+                    str = "0.0";
+                else if(cell.CachedFormulaResultType == CellType.String)
+                {
+                    str = cell.StringCellValue;
+                }
+                else if (cell.CachedFormulaResultType == CellType.Blank)
+                {
+                    str = cell.ToString();
+                }
+
             }
             else if (cell.CellType == CellType.Error)
             {

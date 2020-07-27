@@ -87,7 +87,7 @@ namespace WorkFlow
                     if (sheet.GetRow(i)!=null && sheet.GetRow(i).GetCell(0)!=null && function.Value(sheet.GetRow(i).GetCell(0))=="人员安排表")
                     {
                         ck = true;
-                        Console.WriteLine("start row="+i);
+                        //Console.WriteLine("start row="+i);
                         startRow = i + 2;
                     }
                     if (sheet.GetRow(i) != null && ck && i>=startRow)
@@ -101,6 +101,7 @@ namespace WorkFlow
                         for (int j = 1; j < colCount; j++)
                         {
                             str[j] = function.Value(row.GetCell(j));
+                            
                         };
                         if (str[1].Length>0)
                         {
@@ -109,7 +110,7 @@ namespace WorkFlow
                        
                     }
                 }
-                Console.WriteLine("子项目有："+lda.Count);
+                //Console.WriteLine("子项目有："+lda.Count);
                 pa.setDetail(lda);
                 return pa;
             }

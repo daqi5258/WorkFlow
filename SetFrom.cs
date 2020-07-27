@@ -13,13 +13,24 @@ namespace WorkFlow
     public partial class SetFrom : Form
     {
         public String fileExportPath;
+        public String formName;
         public RichTextBox pRTB;
+        public String type;
+        public String ScoreInAreaPath;
         /// <summary>
         /// 设定界面
         /// </summary>
         /// <param name="rtb"></param>
-        public SetFrom(RichTextBox rtb)
+        public SetFrom(RichTextBox rtb,String type)
         {
+           
+            this.type = type;
+            if (type == "ScoreInAreaPath")
+                formName = "打分规则文件路径设置";
+            else if (type == "fileExportPath")
+            {
+                formName = "导出文件路径设置";
+            }
             InitSetting();
             InitializeComponent();
             pRTB = rtb;
@@ -70,7 +81,14 @@ namespace WorkFlow
         {
             iniFile iniF = new iniFile();
             iniF.iniPath = @"./setting.ini";
-            iniF.writeIni("FileExportPath", "Path", @filePath);
+            if ("fileExportPath" == type)
+            {
+                iniF.writeIni("FileExportPath", "Path", @filePath);
+            }else if ("ScoreInAreaPath"==type)
+            {
+                iniF.writeIni("ScoreInAreaPath", "Path", @filePath);
+            }
+            
             Console.WriteLine("path="+iniF.iniPath);
         }
 
@@ -78,8 +96,15 @@ namespace WorkFlow
         {
             iniFile iniF = new iniFile();
             iniF.iniPath = @"./setting.ini";
-            fileExportPath = iniF.readIni("FileExportPath", "Path");
-            Console.WriteLine("\npath="+iniF.iniPath);
+            
+            if ("fileExportPath" == type)
+            {
+                fileExportPath = iniF.readIni("FileExportPath", "Path");
+            }else if ("ScoreInAreaPath" == type)
+            {
+                fileExportPath = iniF.readIni("ScoreInAreaPath", "Path");
+            }
+            Console.WriteLine("\npath="+iniF.iniPath+",type="+type);
         }
 
         private void ButtonCM_MouseClick(object sender, MouseEventArgs e)
@@ -90,7 +115,7 @@ namespace WorkFlow
                 Setting("C:/");
             }else
                 Setting(FileExportPath.Text);
-            pRTB.AppendText("文件导出路径设置为："+ FileExportPath.Text);
+            pRTB.AppendText("路径设置为："+ FileExportPath.Text);
             this.Dispose(true);
         }
     }

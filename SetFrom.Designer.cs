@@ -44,21 +44,21 @@ namespace WorkFlow
             this.FileExportLabel.Name = "FileExportLabel";
             this.FileExportLabel.Size = new System.Drawing.Size(120, 40);
             this.FileExportLabel.TabIndex = 0;
-            this.FileExportLabel.Text = "当前导出文件路径：";
+            this.FileExportLabel.Text =  "当前文件路径为：";
             this.FileExportLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // FileExportPath
             // 
             this.FileExportPath.Location = new System.Drawing.Point(120, 0);
             this.FileExportPath.Name = "FileExportPath";
-            this.FileExportPath.Size = new System.Drawing.Size(540, 40);
+            this.FileExportPath.Size = new System.Drawing.Size(520, 40);
             this.FileExportPath.TabIndex = 1;
             this.FileExportPath.Text =""+fileExportPath;
             this.FileExportPath.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // ButtonST
             // 
-            this.ButtonST.Location = new System.Drawing.Point(665, 0);
+            this.ButtonST.Location = new System.Drawing.Point(645, 0);
             this.ButtonST.Name = "ButtonST";
             this.ButtonST.Size = new System.Drawing.Size(75, 40);
             this.ButtonST.TabIndex = 2;
@@ -68,7 +68,7 @@ namespace WorkFlow
             // 
             // ButtonCM
             // 
-            this.ButtonCM.Location = new System.Drawing.Point(742, 0);
+            this.ButtonCM.Location = new System.Drawing.Point(722, 0);
             this.ButtonCM.Name = "ButtonCM";
             this.ButtonCM.Size = new System.Drawing.Size(75, 40);
             this.ButtonCM.TabIndex = 3;
@@ -80,17 +80,17 @@ namespace WorkFlow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(816, 39);
+            this.ClientSize = new System.Drawing.Size(796, 39);
             this.Controls.Add(this.ButtonCM);
             this.Controls.Add(this.ButtonST);
             this.Controls.Add(this.FileExportPath);
             this.Controls.Add(this.FileExportLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(832, 77);
-            this.MinimumSize = new System.Drawing.Size(832, 77);
+            this.MaximumSize = new System.Drawing.Size(812, 77);
+            this.MinimumSize = new System.Drawing.Size(812, 77);
             this.Name = "SetFrom";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "导出文件路径设置";
+            this.Text = formName; 
             this.ResumeLayout(false);
 
         }

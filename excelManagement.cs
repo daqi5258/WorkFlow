@@ -134,7 +134,7 @@ namespace WorkFlow
             return HCTypes;
         }
 
-        public void Write(String filepath,List<String[]> inf,String[] header,String dept)
+        public String Write(String filepath,List<String[]> inf,String[] header,String dept)
         {
             DateTime dt = DateTime.Now;
             //String shtStr = dt.ToString(@"MM_dd");
@@ -204,10 +204,17 @@ namespace WorkFlow
                
                 
             }
-
-            FileStream fs = new FileStream(filepath, FileMode.Create, FileAccess.ReadWrite);
-            workbook.Write(fs);
-            fs.Close();
+            try
+            {
+                FileStream fs = new FileStream(filepath, FileMode.Create, FileAccess.ReadWrite);
+                workbook.Write(fs);
+                fs.Close();
+                return "OK";
+            }
+            catch (IOException e)
+            {
+                return "\n操作失败!"+e.ToString();
+            }
         }
 
         /// <summary>

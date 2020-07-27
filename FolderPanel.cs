@@ -14,6 +14,7 @@ namespace WorkFlow
         public String flag;
         public ProgressBar ProgressBar;
         public String exportPath;
+        public String ScoreInAreaPath;
         /// <summary>
         /// 项目选择界面初始化
         /// </summary>
@@ -21,12 +22,13 @@ namespace WorkFlow
         /// <param name="Flag">功能选择标注</param>
         /// <param name="exportPath">导出文件路径</param>
         /// <param name="ProgressBar">进度条</param>
-        public void init(RichTextBox RTB, String Flag, String exportPath, ProgressBar ProgressBar)
+        public void init(RichTextBox RTB, String Flag, String exportPath, ProgressBar ProgressBar,String ScoreInAreaPath)
         {
             this.RTB = RTB;
             this.flag = Flag;
             this.ProgressBar = ProgressBar;
             this.exportPath = exportPath;
+            this.ScoreInAreaPath = ScoreInAreaPath;
             Panel = new TableLayoutPanel()
             {
                 Dock = System.Windows.Forms.DockStyle.Fill,
@@ -191,7 +193,7 @@ namespace WorkFlow
             int c = 0;
             String unFolder ="";
              
-            Thread mythread = new Thread(x => GetScore.Check(folders, exportPath, flag, ref c,ref unFolder)) { IsBackground = true };
+            Thread mythread = new Thread(x => GetScore.Check(folders, exportPath, flag, ref c,ref unFolder, ScoreInAreaPath)) { IsBackground = true };
             mythread.Start();
             mythread.Join();
             ProgressBar.Value = 100;
