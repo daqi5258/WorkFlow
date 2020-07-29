@@ -43,6 +43,7 @@
             this.MessageText = new System.Windows.Forms.RichTextBox();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.MainPanel = new System.Windows.Forms.Panel();
+            this.ZGD_TOOL2 = new System.Windows.Forms.ToolStripMenuItem();
             this.TopMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -70,9 +71,10 @@
             this.总工办.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ZGB_Tool1_1,
             this.ZGD_TOOL1_2,
-            this.PersonArrange});
+            this.PersonArrange,
+            this.ZGD_TOOL2});
             this.总工办.Name = "总工办";
-            this.总工办.Size = new System.Drawing.Size(112, 22);
+            this.总工办.Size = new System.Drawing.Size(180, 22);
             this.总工办.Text = "总工办";
             // 
             // ZGB_Tool1_1
@@ -98,18 +100,19 @@
             this.PersonArrange.Size = new System.Drawing.Size(184, 22);
             this.PersonArrange.Text = "人员安排表";
             this.PersonArrange.Visible = false;
+            this.PersonArrange.Enabled = false;
             // 
             // newPA
             // 
             this.newPA.Name = "newPA";
-            this.newPA.Size = new System.Drawing.Size(124, 22);
+            this.newPA.Size = new System.Drawing.Size(180, 22);
             this.newPA.Text = "新建文件";
             this.newPA.Click += new System.EventHandler(this.newPA_Click);
             // 
             // openPA
             // 
             this.openPA.Name = "openPA";
-            this.openPA.Size = new System.Drawing.Size(124, 22);
+            this.openPA.Size = new System.Drawing.Size(180, 22);
             this.openPA.Text = "打开文件";
             this.openPA.Visible = false;
             this.openPA.Click += new System.EventHandler(this.openPA_Click);
@@ -126,16 +129,18 @@
             // FileExportPath
             // 
             this.FileExportPath.Name = "FileExportPath";
-            this.FileExportPath.Size = new System.Drawing.Size(180, 22);
+            this.FileExportPath.Size = new System.Drawing.Size(172, 22);
             this.FileExportPath.Text = "导出文件目录设置";
             this.FileExportPath.Click += new System.EventHandler(this.FileExportPath_Click);
             // 
             // ScoreInArea
             // 
             this.ScoreInArea.Name = "ScoreInArea";
-            this.ScoreInArea.Size = new System.Drawing.Size(180, 22);
+            this.ScoreInArea.Size = new System.Drawing.Size(172, 22);
             this.ScoreInArea.Text = "打分规则文件设置";
             this.ScoreInArea.Click += new System.EventHandler(this.ScoreInArea_Click);
+            this.ScoreInArea.Visible = false;
+            this.ScoreInArea.Enabled = false;
             // 
             // MessageText
             // 
@@ -163,6 +168,13 @@
             this.MainPanel.Name = "MainPanel";
             this.MainPanel.Size = new System.Drawing.Size(800, 635);
             this.MainPanel.TabIndex = 4;
+            // 
+            // ZGD_TOOL2
+            // 
+            this.ZGD_TOOL2.Name = "ZGD_TOOL2";
+            this.ZGD_TOOL2.Size = new System.Drawing.Size(184, 22);
+            this.ZGD_TOOL2.Text = "分数分析汇总";
+            this.ZGD_TOOL2.Click += new System.EventHandler(this.ZGD_TOOL2_Click);
             // 
             // MainForm
             // 
@@ -205,6 +217,7 @@
         private System.Windows.Forms.ToolStripMenuItem newPA;
         private System.Windows.Forms.ToolStripMenuItem openPA;
         private System.Windows.Forms.ToolStripMenuItem ScoreInArea;
+        private System.Windows.Forms.ToolStripMenuItem ZGD_TOOL2;
     }
 }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Runtime.InteropServices;
@@ -40,18 +41,21 @@ namespace WorkFlow
     [Editor(typeof(FolderNameEditor), typeof(UITypeEditor))]
     public class FolderBrowserForm : Component
     {
-        /// <summary>
-        /// 初始化 FolderBrowser 的新实例
-        /// </summary>
-        public FolderBrowserForm()
-        {
-        }
 
         #region Public Property
         /// <summary>
         /// 获取在 FolderBrowser 中选择的文件夹路径
         /// </summary>
         public string DirectoryPath { get; set; }
+        public IFileOpenDialog dialog;
+        /// <summary>
+        /// 初始化 FolderBrowser 的新实例
+        /// </summary>
+        public FolderBrowserForm()
+        {
+            dialog = (IFileOpenDialog)new FileOpenDialog();
+        }
+      
         /// <summary>
         /// 向用户显示 FolderBrowser 的对话框
         /// </summary>
@@ -60,7 +64,7 @@ namespace WorkFlow
         public DialogResult ShowDialog(IWin32Window owner)
         {
             IntPtr hwndOwner = owner != null ? owner.Handle : GetActiveWindow();
-            IFileOpenDialog dialog = (IFileOpenDialog)new FileOpenDialog();
+           
             try
             {
                 IShellItem item;
@@ -72,11 +76,11 @@ namespace WorkFlow
                     {
                         if (SHCreateShellItem(IntPtr.Zero, IntPtr.Zero, idl, out item) == 0)
                         {
-                            dialog.SetFolder(item);
+                             dialog.SetFolder(item);
                         }
                     }
                 }
-                dialog.SetOptions(FOS.FOS_PICKFOLDERS | FOS.FOS_FORCEFILESYSTEM);
+                dialog.SetOptions(FOS.FOS_PICKFOLDERS | FOS.FOS_FORCEFILESYSTEM );
                 uint hr = dialog.Show(hwndOwner);
                 if (hr == ERROR_CANCELLED)
                     return DialogResult.Cancel;
@@ -106,13 +110,13 @@ namespace WorkFlow
         private const uint ERROR_CANCELLED = 0x800704C7;
         [ComImport]
         [Guid("DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7")]
-        private class FileOpenDialog
+        public class FileOpenDialog
         {
         }
         [ComImport]
         [Guid("42f85136-db7e-439c-85f1-e4075d135fc8")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        private interface IFileOpenDialog
+        public interface IFileOpenDialog
         {
             [PreserveSig]
             uint Show([In] IntPtr parent); // IModalWindow
@@ -145,7 +149,7 @@ namespace WorkFlow
         [ComImport]
         [Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        private interface IShellItem
+        public interface IShellItem
         {
             void BindToHandler(); // not fully defined
             void GetParent(); // not fully defined
@@ -153,7 +157,7 @@ namespace WorkFlow
             void GetAttributes();  // not fully defined
             void Compare();  // not fully defined
         }
-        private enum SIGDN : uint
+        public enum SIGDN : uint
         {
             SIGDN_DESKTOPABSOLUTEEDITING = 0x8004c000,
             SIGDN_DESKTOPABSOLUTEPARSING = 0x80028000,
@@ -166,7 +170,7 @@ namespace WorkFlow
             SIGDN_URL = 0x80068000
         }
         [Flags]
-        private enum FOS
+        public  enum FOS
         {
             FOS_ALLNONSTORAGEITEMS = 0x80,
             FOS_ALLOWMULTISELECT = 0x200,

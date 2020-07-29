@@ -167,11 +167,11 @@ namespace WorkFlow
                                             foreach (HCType hCType in HCTypes)
                                             {
                                                 Boolean eFlag = false;
-                                                if (hCType.TypeName == tmpStr[8])
+                                                if (hCType.TypeName == tmpStr[7])
                                                 {
                                                     foreach (ScoreInArea sia in hCType.Detail)
                                                     {
-                                                        if (sia.Area == tmpStr[9])
+                                                        if (sia.Area == tmpStr[8])
                                                         {
                                                             if (zttmp.IndexOf("建筑") > -1)
                                                                 resStr[16] = sia.jz;
@@ -276,7 +276,12 @@ namespace WorkFlow
                                         resStr[6] = "Y";
                                 }
                             }
-                            resStr[13] = (function.StringToDouble(resStr[10])*0.3 + function.StringToDouble(resStr[11])*0.4 + function.StringToDouble(resStr[12])*0.3 ).ToString("#0.00");
+                           for (int i =8;i<=12;i++)
+                            {
+                                if(resStr[16]!=null )
+                                    resStr[i] = (100 - (100 - function.StringToDouble(resStr[i])) / function.StringToDouble(resStr[16])).ToString("#0.00");
+                            }
+                            resStr[13] = (function.StringToDouble(resStr[10]) * 0.3 + function.StringToDouble(resStr[11]) * 0.4 + function.StringToDouble(resStr[12]) * 0.3).ToString("#0.00");
 
                         }
                         else
@@ -302,7 +307,7 @@ namespace WorkFlow
               
                 
             } 
-            return "检索完成，结果见文件夹： " + Exportpath;
+            return "检索完成，结果见文件夹：<A href=\" " + Exportpath+"\">"+Exportpath;
         }
 
 

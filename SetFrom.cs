@@ -115,7 +115,7 @@ namespace WorkFlow
                 Setting("C:/");
             }else
                 Setting(FileExportPath.Text);
-            pRTB.AppendText("路径设置为："+ FileExportPath.Text);
+            pRTB.AppendText("\n路径设置为："+ FileExportPath.Text);
             this.Dispose(true);
         }
     }

@@ -198,10 +198,16 @@ namespace WorkFlow
             mythread.Join();
             ProgressBar.Value = 100;
             if (c==item)
-                RTB.AppendText("\n检索完成，总共导出"+c+"个项目，路径： "+exportPath);
+                RTB.AppendText("\n检索完成，总共导出"+c+"个项目，路径：" +exportPath);
             else
 
                 RTB.AppendText("\n检索完成，总共导出" + c + "个项目，路径： " + exportPath+"\n未导出项目如下：\t"+unFolder);
+            MessageBoxButtons messButton = MessageBoxButtons.OKCancel;
+
+
+            DialogResult dr = MessageBox.Show("是否打开导出文件所在目录?", "打开", messButton);
+            if (dr == DialogResult.OK)//如果点击“确定”按钮
+                System.Diagnostics.Process.Start("explorer.exe", exportPath);
         }
 
         private void saveC_click(object sender, EventArgs e)
@@ -218,6 +224,7 @@ namespace WorkFlow
             String path = null;
             FolderBrowserForm dialog = new FolderBrowserForm();
             dialog.DirectoryPath = selectedPath;
+            //OpenFileDialog
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 path = dialog.DirectoryPath;

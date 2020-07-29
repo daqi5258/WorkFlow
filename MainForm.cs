@@ -81,6 +81,24 @@ namespace WorkFlow
             sf.ShowDialog();
         }
 
+
+        private void ZGD_TOOL2_Click(object sender, EventArgs e)
+        {
+            string filePath = "";
+            OpenFileDialog op = new OpenFileDialog();
+            op.Filter = "excel Files(*.xls)|*.xls*|All Files(*.*)|*.*";
+            if (op.ShowDialog() == DialogResult.OK)
+            {
+                filePath = op.FileName;
+            }
+
+
+            function.cpScore(filePath);
+            
+        }
+
+
+
         /// <summary>
         /// 获取项目文件路径
         /// </summary>
@@ -370,7 +388,7 @@ namespace WorkFlow
             ScoreInAreaPath = iniF.readIni("ScoreInAreaPath","Path");
         }
 
-        
+
 
         /*
 private void MainForm_Paint(object sender, PaintEventArgs e)

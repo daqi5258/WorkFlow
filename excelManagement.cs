@@ -75,7 +75,7 @@ namespace WorkFlow
             List<HCType> HCTypes = new List<HCType>();
             String lastTypeName = "";
             int count = 0;
-            for (int i=4;i<rowCount && count<3;i++)
+            for (int i=3;i<rowCount && count<3;i++)
             {
 
                 String Kind = Value(sheet.GetRow(i).GetCell(0));
@@ -130,7 +130,16 @@ namespace WorkFlow
 
                 }
             }
-            //Console.WriteLine("c="+HCTypes.Count);
+            /*Console.WriteLine("c="+HCTypes.Count);
+
+            foreach (HCType hCType in HCTypes)
+            {
+                foreach (ScoreInArea sia in hCType.Detail)
+                {
+                    Console.WriteLine(hCType.TypeName+","+sia.Area+","+sia.jz+","+sia.jg+","+sia.water);
+                }
+            }
+            */
             return HCTypes;
         }
 
@@ -138,11 +147,13 @@ namespace WorkFlow
         {
             DateTime dt = DateTime.Now;
             //String shtStr = dt.ToString(@"MM_dd");
+           
             
             IWorkbook workbook = new HSSFWorkbook();
             try{
                 workbook = WorkbookFactory.Create(filepath);
-
+                ICellStyle cellStyle = workbook.CreateCellStyle();
+                cellStyle.DataFormat = HSSFDataFormat.GetBuiltinFormat("0.00");
                 ISheet sht = workbook.GetSheet(dept);
                 if (sht != null)
                 {
@@ -174,6 +185,10 @@ namespace WorkFlow
                         for (int i = 0; i < str.Length; i++)
                         {
                             ICell cell = row.CreateCell(i);
+                            if (i >= 8 && i <= 12)
+                            {
+                                cell.CellStyle = cellStyle;
+                            }
                             cell.SetCellValue(str[i]);
                         }
                         rowCount++;
@@ -183,6 +198,8 @@ namespace WorkFlow
             catch (Exception e)
             {
                 Console.WriteLine("\nfile not found:"+e);
+                ICellStyle cellStyle = workbook.CreateCellStyle();
+                cellStyle.DataFormat = HSSFDataFormat.GetBuiltinFormat("0.00");
                 ISheet sht = workbook.CreateSheet(dept);
                 IRow Header = sht.CreateRow(0);
                 for (int i = 0; i < header.Length; i++)
@@ -197,6 +214,8 @@ namespace WorkFlow
                     for (int i = 0; i < str.Length; i++)
                     {
                         ICell cell = row.CreateCell(i);
+                        if(i>=8 && i<=12)
+                            cell.CellStyle = cellStyle;
                         cell.SetCellValue(str[i]);
                     }
                     rowCount++;
